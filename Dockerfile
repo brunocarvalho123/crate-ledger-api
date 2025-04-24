@@ -11,8 +11,11 @@ RUN npm install
 # Copy app source
 COPY . .
 
-# Expose port
-EXPOSE 3000
+# Build the TypeScript code
+RUN npm run build
 
-# Start the app
-CMD [ "node", "index.js" ]
+# Run the compiled code
+CMD ["npm", "start"]
+
+# Expose the port
+EXPOSE 3000
