@@ -3,7 +3,8 @@ export interface AssetType {
   name: string;
   type: string;
   priceUSD: number;
-  symbol?: string;
+  symbol: string;
   updatedAt?: Date;
+  createdAt?: Date;
 }
   
