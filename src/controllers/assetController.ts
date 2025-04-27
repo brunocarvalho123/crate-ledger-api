@@ -6,7 +6,13 @@ import { AssetType } from '../types/asset';
 export const getAllAssets = async (req: Request, res: Response) => {
   try {
     const assets = await Asset.find();
-    res.json(assets);
+    const serializedAssets = assets.map(asset => ({
+      name: asset.name,
+      type: asset.type,
+      symbol: asset.symbol,
+      price: asset.price
+    }));
+    res.json(serializedAssets);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching assets', error: err });
   }
