@@ -23,9 +23,9 @@ export const getAssetBySymbol = async (req: Request, res: Response) => {
     res.status(400).json({ error: 'ID parameter is required' });
     return;
   }
-  console.log(`with symbol: %{id}`)
+  console.log(`with symbol: ${id}`)
   try {
-    const asset = await Asset.findOne({ symbol: "id" });
+    const asset = await Asset.findOne({ symbol: id });
     console.log(asset)
     res.json(serializeAsset(asset));
   } catch (err) {
@@ -40,7 +40,7 @@ export const getAssetsBySymbol = async (req: Request, res: Response) => {
     res.status(400).json({ error: 'Symbol query parameter is required' });
     return;
   }
-  console.log(`with symbols: %{symbols}`)
+  console.log(`with symbols: ${symbols}`)
   const symbolArray = symbols.split(',');
   try {
     const assets = await Asset.find({ symbol: { $in: symbolArray } });
