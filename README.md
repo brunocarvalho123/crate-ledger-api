@@ -71,6 +71,8 @@ docker run -p 3000:3000 crate-ledger-api
 ## 🚧 Current Endpoints
 
 - `GET /assets` – Get all assets
+- `GET /assets/BTC` – Get a single asset
+- `GET /assets/query?symbol=BTC,ETH` – Get requested assets
 - `POST /assets` – Add a new asset
 
 More to come: asset price tracking, value overrides, and more asset types.
