@@ -7,7 +7,7 @@ const assetSchema = new mongoose.Schema<AssetType>({
   type: { type: String, required: true }, // crypto, stock, metal, currency.
   price: { type: Number, required: true, min: 0 }, // price in USD always, then use currency rates to convert
   symbol: { type: String, required: true, uppercase: true }, // e.g., BTC, AAPL, etc.
-  image: { type: Object },
+  image: { type: String },
   updatedAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now, immutable: true }
 });

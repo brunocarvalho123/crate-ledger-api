@@ -5,15 +5,7 @@ import { AssetType } from '../types/asset';
 type AssetDocument = Document & AssetType;
 
 export const serializeAssets = (assets: AssetDocument[]) => {
-  return assets.map(asset => ({
-    name: asset.name,
-    type: asset.type,
-    symbol: asset.symbol,
-    price: asset.price,
-    thumbURL: asset.image?.thumb,
-    smallURL: asset.image?.small,
-    largeURL: asset.image?.large
-  }));
+  return assets.map(asset => serializeAsset(asset));
 }
 
 export const serializeAsset = (asset: AssetDocument | null) => {
@@ -26,8 +18,6 @@ export const serializeAsset = (asset: AssetDocument | null) => {
     type: asset.type,
     symbol: asset.symbol,
     price: asset.price,
-    thumbURL: asset.image?.thumb,
-    smallURL: asset.image?.small,
-    largeURL: asset.image?.large
+    image: asset.image
   };
 }
