@@ -9,7 +9,8 @@ const assetSchema = new mongoose.Schema<AssetType>({
   symbol: { type: String, required: true, uppercase: true }, // e.g., BTC, AAPL, etc.
   image: { type: String },
   updatedAt: { type: Date, default: Date.now },
-  createdAt: { type: Date, default: Date.now, immutable: true }
+  createdAt: { type: Date, default: Date.now, immutable: true },
+  uniqueKey: { type: String, required: true, unique: true } // e.g., "crypto_BTC"
 });
 
 export const Asset = mongoose.model<AssetType>('Asset', assetSchema);

@@ -1,6 +1,7 @@
 // src/api-managers/coingecko.ts
 import axios from 'axios';
 import dotenv from 'dotenv';
+import { AssetType } from '../types/asset';
 
 dotenv.config();
 
@@ -9,8 +10,8 @@ const token = process.env.COINGECKO_API_TOKEN!;
 
 
 // Use this to get the data to update the top 250 assets
-export const getAllAssetsInfo = async () => {
-  const fullUrl = `${baseUrl}/coins/markets?vs_currency=usd&per_page=10`;
+export const getAllAssetsInfo = async (): Promise<AssetType[]> => {
+  const fullUrl = `${baseUrl}/coins/markets?vs_currency=usd&per_page=250`;
 
   console.log(`Calling CoinGecko API with url: ${fullUrl}`);
   
@@ -21,8 +22,19 @@ export const getAllAssetsInfo = async () => {
   });
 
   if (response?.data && response.data.length > 0) {
-    const assetsData = response.data;
-    return assetsData;
+    const now = new Date();
+
+    const assets: AssetType[] = response.data.map((asset: any) => ({
+      name: asset.name,
+      type: 'crypto',
+      price: asset.current_price,
+      symbol: asset.symbol.toUpperCase(),
+      image: asset.image,
+      createdAt: now,
+      updatedAt: now
+    }));
+
+    return assets;
   } else {
     console.log(response);
     throw new Error('Unexpected response from CoinCap API');

@@ -25,7 +25,7 @@ export const getAssetBySymbol = async (req: Request, res: Response) => {
   }
   console.log(`with symbol: ${id}`)
   try {
-    const asset = await Asset.findOne({ symbol: id });
+    const asset = await Asset.findOne({ uniqueKey: `crypto_${id}` });
     console.log(asset)
     res.json(serializeAsset(asset));
   } catch (err) {
@@ -41,23 +41,12 @@ export const getAssetsBySymbol = async (req: Request, res: Response) => {
     return;
   }
   console.log(`with symbols: ${symbols}`)
-  const symbolArray = symbols.split(',');
+  const symbolArray = symbols.split(',').map(e => `crypto_${e.toUpperCase()}`);
   try {
-    const assets = await Asset.find({ symbol: { $in: symbolArray } });
+    const assets = await Asset.find({ uniqueKey: { $in: symbolArray } });
     console.log(assets)
     res.json(serializeAssets(assets));
   } catch (err) {
     res.status(500).json({ message: 'Error fetching assets', error: err });
-  }
-};
-
-export const createAsset = async (req: Request, res: Response) => {
-  try {
-    const newAsset: AssetType = req.body;
-    const asset = new Asset(newAsset);
-    await asset.save();
-    res.status(201).json(asset);
-  } catch (err) {
-    res.status(400).json({ message: 'Invalid asset data', error: err });
   }
 };

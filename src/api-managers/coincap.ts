@@ -1,6 +1,7 @@
 // src/api-managers/coincap.ts
 import axios from 'axios';
 import dotenv from 'dotenv';
+import { AssetType } from '../types/asset';
 
 dotenv.config();
 
@@ -75,8 +76,8 @@ export const getAssetsInfo = async (assetsId: String[]) => {
 }
 
 // Use this to get the data to update the top 250 assets
-export const getAllAssetsInfo = async () => {
-  const fullUrl = `${baseUrl}/assets?limit=10`;
+export const getAllAssetsInfo = async (): Promise<AssetType[]> => {
+  const fullUrl = `${baseUrl}/assets?limit=250`;
 
   console.log(`Calling CoinCap API with url: ${fullUrl}`);
   
@@ -87,8 +88,18 @@ export const getAllAssetsInfo = async () => {
   });
 
   if (response?.data?.data) {
-    const assetsData = response.data.data;
-    return assetsData;
+    const now = new Date();
+
+    const assets: AssetType[] = response.data.data.map((asset: any) => ({
+      name: asset.name,
+      type: 'crypto',
+      price: Number(asset.priceUsd),
+      symbol: asset.symbol.toUpperCase(),
+      createdAt: now,
+      updatedAt: now
+    }));
+
+    return assets;
   } else if (response?.data?.data === null) {
     throw new Error('Asset not found');
   } else {

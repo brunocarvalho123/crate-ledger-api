@@ -7,5 +7,6 @@ export interface AssetType {
   image?: string;
   updatedAt?: Date;
   createdAt?: Date;
+  uniqueKey: string;
 }
   
