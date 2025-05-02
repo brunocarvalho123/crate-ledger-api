@@ -37,7 +37,7 @@ export const getAllAssetsInfo = async (): Promise<AssetType[]> => {
     return assets;
   } else {
     console.log(response);
-    throw new Error('Unexpected response from CoinCap API');
+    throw new Error('Unexpected response from CoinGecko API');
   }
 }
 
