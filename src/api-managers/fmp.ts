@@ -35,17 +35,53 @@ export const getMostActiveStocks = async () => {
     return assets;
   } else {
     console.log(response);
-    throw new Error('Unexpected response from CoinGecko API');
+    throw new Error('Unexpected response from FMP API');
   }
 }
 
+export const getStock = async (symbol: String): Promise<AssetType[]> => {
+  const fullUrl = `${baseUrl}/quote?symbol=${symbol.toUpperCase()}&apikey=${token}`;
 
-// sample object response from FMP
-// {
-//   "symbol": "NVDA",
-//   "price": 111.61,
-//   "name": "NVIDIA Corporation",
-//   "change": 2.69,
-//   "changesPercentage": 2.4697,
-//   "exchange": "NASDAQ"
-// }
+  console.log(`Calling FMP API with url: ${fullUrl}`);
+  
+  const response = await axios.get(fullUrl);
+  if (response?.data && response.data.length > 0) {
+    const now = new Date();
+
+    const asset: AssetType[] = response.data.map((asset: any) => ({
+      name: asset.name,
+      type: 'stock',
+      price: asset.price,
+      symbol: asset.symbol.toUpperCase(),
+      createdAt: now,
+      updatedAt: now
+    }));
+
+    return asset;
+  } else {
+    console.log(response);
+    throw new Error('Unexpected response from FMP API');
+  }
+}
+
+// [
+// 	{
+// 		"symbol": "AAPL",
+// 		"name": "Apple Inc.",
+// 		"price": 232.8,
+// 		"changePercentage": 2.1008,
+// 		"change": 4.79,
+// 		"volume": 44489128,
+// 		"dayLow": 226.65,
+// 		"dayHigh": 233.13,
+// 		"yearHigh": 260.1,
+// 		"yearLow": 164.08,
+// 		"marketCap": 3500823120000,
+// 		"priceAvg50": 240.2278,
+// 		"priceAvg200": 219.98755,
+// 		"exchange": "NASDAQ",
+// 		"open": 227.2,
+// 		"previousClose": 228.01,
+// 		"timestamp": 1738702801
+// 	}
+// ]

@@ -1,8 +1,5 @@
 // src/utils/serializeAssets.ts
-import { Document } from 'mongoose';
-import { AssetType } from '../types/asset';
-
-type AssetDocument = Document & AssetType;
+import { AssetDocument } from "../types/assetDocument";
 
 export const serializeAssets = (assets: AssetDocument[]) => {
   return assets.map(asset => serializeAsset(asset));

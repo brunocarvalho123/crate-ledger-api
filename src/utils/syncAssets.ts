@@ -1,4 +1,4 @@
-import { Asset } from '../models/asset'; // Adjust to your model path
+import { Asset } from '../models/asset';
 import { AssetType } from '../types/asset';
 
 export const syncAssetsWithDb = async (assets: AssetType[]) => {

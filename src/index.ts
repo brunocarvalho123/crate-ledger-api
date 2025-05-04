@@ -27,10 +27,10 @@ mongoose.connect(process.env.MONGODB_URI!)
     }
 
     // await fullMarketSnapshot();
-    const geckoAssets = await geckoAssetsInfo();
+    // const geckoAssets = await geckoAssetsInfo();
 
     // const capAssets = await capAssetsInfo();
-    await syncAssetsWithDb(geckoAssets);    
+    // await syncAssetsWithDb(geckoAssets);    
   })
   .catch(err => console.error('MongoDB error:', err));
 

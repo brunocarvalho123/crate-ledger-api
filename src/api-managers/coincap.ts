@@ -32,8 +32,8 @@ export const getMarketRate = async (assetsId: String[]) => {
 }
 
 // assets api, find asset information by symbol
-export const getAssetInfo = async (assetSymbol: String) => {
-  const fullUrl = `${baseUrl}/assets?search=${assetSymbol}&limit=1`;
+export const getCrypto = async (symbol: String): Promise<AssetType[]> => {
+  const fullUrl = `${baseUrl}/assets?search=${symbol}&limit=1`;
 
   console.log(`Calling CoinCap API with url: ${fullUrl}`);
   
@@ -44,8 +44,16 @@ export const getAssetInfo = async (assetSymbol: String) => {
   });
 
   if (response?.data?.data && response.data.data.length === 1) {
-    const assetData = response.data.data[0];
-    return assetData;
+    const now = new Date();
+    const asset: AssetType[] = response.data.data.map((asset: any) => ({
+      name: asset.name,
+      type: 'crypto',
+      price: asset.priceUsd,
+      symbol: asset.symbol.toUpperCase(),
+      createdAt: now,
+      updatedAt: now
+    }));
+    return asset;
   } else if (response?.data?.data === null) {
     throw new Error('Asset not found');
   } else {
@@ -109,16 +117,21 @@ export const getAllAssetsInfo = async (): Promise<AssetType[]> => {
 
 // Sample object response from coincap
 // {
-//   id: 'cardano',
-//   rank: '9',
-//   symbol: 'ADA',
-//   name: 'Cardano',
-//   supply: '35302796703.7438900000000000',
-//   maxSupply: '45000000000.0000000000000000',
-//   marketCapUsd: '24649883205.4887852606583134',
-//   volumeUsd24Hr: '412956047.6640892167101678',
-//   priceUsd: '0.6982416552531841',
-//   changePercent24Hr: '-1.9766259953503604',
-//   vwap24Hr: '0.7058391538348097',
-//   explorer: 'https://cardanoexplorer.com/'
+//   "timestamp": 1726081635506,
+//   "data": [
+//     {
+//       "id": "bitcoin",
+//       "rank": "1",
+//       "symbol": "BTC",
+//       "name": "Bitcoin",
+//       "supply": "19752815.0000000000000000",
+//       "maxSupply": "21000000.0000000000000000",
+//       "marketCapUsd": "1134508584478.0989721079862315",
+//       "volumeUsd24Hr": "7243846863.3409126543165751",
+//       "priceUsd": "57435.2862859343831301",
+//       "changePercent24Hr": "-0.0461491427646531",
+//       "vwap24Hr": "57868.1484672081301126",
+//       "explorer": "https://blockchain.info/werweqrerwerw"
+//     }
+//   ]
 // }
