@@ -1,11 +1,10 @@
 // src/routes/assetRoutes.ts
 import express from 'express';
-import { getAllAssets, getAssetBySymbol, getAssetsBySymbol } from '../controllers/assetController';
+import { getAsset, getAssets } from '../controllers/assetController';
 
 const router = express.Router();
 
-router.get('/', getAllAssets);
-router.get('/query', getAssetsBySymbol);
-router.get('/:id', getAssetBySymbol); 
+router.get('/query', getAssets);
+router.get('/:id', getAsset); 
 
 export default router;
