@@ -5,8 +5,6 @@ import dotenv from 'dotenv';
 import assetRoutes from './routes/assetRoutes';
 import { Asset } from './models/asset';
 import { getAllAssetsInfo as geckoAssetsInfo } from './api-managers/coingecko';
-// import { getAllAssetsInfo as capAssetsInfo } from './api-managers/coincap';
-// import { fullMarketSnapshot } from './api-managers/polygon';
 import { syncAssetsWithDb } from './utils/syncAssets';
 
 dotenv.config();
@@ -26,11 +24,11 @@ mongoose.connect(process.env.MONGODB_URI!)
       console.error('Failed to initialize indexes:', error);
     }
 
-    // await fullMarketSnapshot();
-    // const geckoAssets = await geckoAssetsInfo();
-
-    // const capAssets = await capAssetsInfo();
-    // await syncAssetsWithDb(geckoAssets);    
+    const fetchCryptoAssets = true;
+    if (fetchCryptoAssets) {
+      const geckoAssets = await geckoAssetsInfo();
+      await syncAssetsWithDb(geckoAssets);
+    }
   })
   .catch(err => console.error('MongoDB error:', err));
 
