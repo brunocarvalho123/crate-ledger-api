@@ -1,7 +1,7 @@
 // src/api-managers/coingecko.ts
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { AssetType } from '../types/asset';
+import { AssetType, AssetCategory } from '../types/asset';
 
 dotenv.config();
 
@@ -26,7 +26,7 @@ export const getAllAssetsInfo = async (): Promise<AssetType[]> => {
 
     const assets: AssetType[] = response.data.map((asset: any) => ({
       name: asset.name,
-      type: 'crypto',
+      type: AssetCategory.Crypto,
       price: asset.current_price,
       symbol: asset.symbol.toUpperCase(),
       image: asset.image,

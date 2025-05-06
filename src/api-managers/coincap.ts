@@ -1,7 +1,7 @@
 // src/api-managers/coincap.ts
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { AssetType } from '../types/asset';
+import { AssetCategory, AssetType } from '../types/asset';
 
 dotenv.config();
 
@@ -47,7 +47,7 @@ export const getCrypto = async (symbol: String): Promise<AssetType[]> => {
     const now = new Date();
     const asset: AssetType[] = response.data.data.map((asset: any) => ({
       name: asset.name,
-      type: 'crypto',
+      type: AssetCategory.Crypto,
       price: asset.priceUsd,
       symbol: asset.symbol.toUpperCase(),
       createdAt: now,
@@ -100,7 +100,7 @@ export const getAllAssetsInfo = async (): Promise<AssetType[]> => {
 
     const assets: AssetType[] = response.data.data.map((asset: any) => ({
       name: asset.name,
-      type: 'crypto',
+      type: AssetCategory.Crypto,
       price: Number(asset.priceUsd),
       symbol: asset.symbol.toUpperCase(),
       createdAt: now,

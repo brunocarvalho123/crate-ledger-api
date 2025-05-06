@@ -1,7 +1,7 @@
 // src/api-managers/polygon.ts
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { AssetType } from '../types/asset';
+import { AssetCategory, AssetType } from '../types/asset';
 
 dotenv.config();
 
@@ -27,7 +27,7 @@ export const fullMarketSnapshot = async () => {
 
     const assets: AssetType[] = response.data.tickers.map((asset: any) => ({
       name: asset.ticker,
-      type: 'stock',
+      type: AssetCategory.Stock,
       price: asset.day?.c ||  asset.lastQuote?.["P"],
       symbol: asset.ticker.toUpperCase(),
       createdAt: now,
