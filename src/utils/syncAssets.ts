@@ -18,7 +18,7 @@ export const syncAssetsWithDb = async (assets: AssetType[]) => {
             symbol: asset.symbol.toUpperCase(),
             image: asset.image,
             updatedAt: now,
-            uniqueKey
+            uniqueKey: asset.uniqueKey || uniqueKey
           },
           $setOnInsert: {
             createdAt: now

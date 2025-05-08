@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import assetRoutes from './routes/assetRoutes';
 import { Asset } from './models/asset';
 import { syncCryptoAssetsJob } from './jobs/syncCryptoAssetsJob';
+import { syncCurrenciesJob } from './jobs/syncCurrenciesJob';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ mongoose.connect(process.env.MONGODB_URI!)
     }
 
     syncCryptoAssetsJob();
+    syncCurrenciesJob();
 
     app.listen(port, () => {
       console.log(`🚀 Server running on port ${port}`);
