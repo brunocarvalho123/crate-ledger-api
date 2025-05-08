@@ -97,7 +97,7 @@ const isAssetStale = (asset: AssetDocument): Boolean => {
         staleTime = 2 * 60 * 60000 // 2hr
         break;
       case AssetCategory.Cash:
-        staleTime = 30 * 60000 // 30min
+        staleTime = Infinity // None
         break;
       default:
         throw new Error("Invalid type");
@@ -111,7 +111,7 @@ const isAssetStale = (asset: AssetDocument): Boolean => {
   return false;
 }
 
-const fetchAssetFromApi = async (key: String): Promise<AssetDocument | null> => {
+const fetchAssetFromApi = async (key: string): Promise<AssetDocument | null> => {
   // Asset not found in database check type and request data from apropriate API
   let asset: AssetDocument | null = null;
   const type: AssetCategory | null = toAssetCategory(key.split('_')[0]);

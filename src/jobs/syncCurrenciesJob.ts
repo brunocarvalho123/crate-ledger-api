@@ -2,7 +2,7 @@
 import { getAllCurrencies, getAvailableCurrencies } from '../api-managers/frankfurter';
 import { syncAssetsWithDb } from '../utils/syncAssets';
 
-const SYNC_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
+const SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export const syncCurrenciesJob = async () => {
   

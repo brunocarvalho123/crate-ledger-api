@@ -10,7 +10,7 @@ const token = process.env.COINCAP_API_TOKEN!;
 
 // rates api, assetsId is an array of the assets id in coincaps api
 // use this to update the USD price
-export const getMarketRate = async (assetsId: String[]) => {
+export const getMarketRate = async (assetsId: string[]) => {
   const fullUrl = `${baseUrl}/rates?ids=${assetsId.join(',')}`;
 
   console.log(`Calling CoinCap API with url: ${fullUrl}`);
@@ -32,7 +32,7 @@ export const getMarketRate = async (assetsId: String[]) => {
 }
 
 // assets api, find asset information by symbol
-export const getCrypto = async (symbol: String): Promise<AssetType[]> => {
+export const getCrypto = async (symbol: string): Promise<AssetType[]> => {
   const fullUrl = `${baseUrl}/assets?search=${symbol}&limit=1`;
 
   console.log(`Calling CoinCap API with url: ${fullUrl}`);
@@ -62,7 +62,7 @@ export const getCrypto = async (symbol: String): Promise<AssetType[]> => {
 }
 
 // assets api, find multiple assets information by coincap id
-export const getAssetsInfo = async (assetsId: String[]) => {
+export const getAssetsInfo = async (assetsId: string[]) => {
   const fullUrl = `${baseUrl}/assets?ids=${assetsId.join(',')}`;
 
   console.log(`Calling CoinCap API with url: ${fullUrl}`);

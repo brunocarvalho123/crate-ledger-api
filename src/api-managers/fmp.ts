@@ -39,7 +39,7 @@ export const getMostActiveStocks = async () => {
   }
 }
 
-export const getStock = async (symbol: String): Promise<AssetType[]> => {
+export const getStock = async (symbol: string): Promise<AssetType[]> => {
   const fullUrl = `${baseUrl}/quote?symbol=${symbol.toUpperCase()}&apikey=${token}`;
 
   console.log(`Calling FMP API with url: ${fullUrl}`);
