@@ -23,6 +23,7 @@
     "axios": "^1.x",
     "dotenv": "^16.x",
     "express": "^5.x",
+    "express-rate-limit": "^7.x",
     "mongoose": "^8.x",
     "yahoo-finance2": "^2.x"
   },
