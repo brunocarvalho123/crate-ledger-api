@@ -73,7 +73,7 @@ export const getAssets = async (req: Request, res: Response) => {
   }
 };
 
-const isAssetStale = (asset: AssetDocument): Boolean => {
+const isAssetStale = (asset: AssetDocument): boolean => {
   if (asset.updatedAt) {
     const now = new Date();
     const assetUpdatedAt = new Date(asset.updatedAt);
@@ -91,10 +91,10 @@ const isAssetStale = (asset: AssetDocument): Boolean => {
         staleTime = 5 * 60000 // 5min
         break;
       case AssetCategory.Bond:
-        staleTime = 60 * 60000 // 1hr
+        staleTime = Infinity // None
         break;
       case AssetCategory.Metal:
-        staleTime = 2 * 60 * 60000 // 2hr
+        staleTime = Infinity // None
         break;
       case AssetCategory.Cash:
         staleTime = Infinity // None
@@ -127,14 +127,8 @@ const fetchAssetFromApi = async (key: string): Promise<AssetDocument | null> => 
       case AssetCategory.Crypto:
         apiCallResult = await getCrypto(symbol);
         break;
-      case AssetCategory.Bond:
-        break;
-      case AssetCategory.Metal:
-        break;
-      case AssetCategory.Cash:
-        break;
       default:
-        throw new Error("Invalid type");
+        throw new Error(`No individual fetch for ${type}`);
     }
     if (apiCallResult !== undefined) {
       await syncAssetsWithDb(apiCallResult);
