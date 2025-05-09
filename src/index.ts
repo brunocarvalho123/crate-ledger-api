@@ -8,6 +8,7 @@ import { Asset } from './models/asset';
 import { syncCryptoAssetsJob } from './jobs/syncCryptoAssetsJob';
 import { syncCurrenciesJob } from './jobs/syncCurrenciesJob';
 import { syncMetalAssetsJob } from './jobs/syncMetalAssetsJob';
+import { searchAssets } from './api-managers/yahooFinance';
 
 dotenv.config();
 
@@ -42,6 +43,9 @@ mongoose.connect(process.env.MONGODB_URI!)
     // syncCryptoAssetsJob();
     // syncCurrenciesJob();
     // syncMetalAssetsJob();
+    // const results = await searchAssets('goo');
+    // console.log(results);
+    
 
     app.listen(port, () => {
       console.log(`🚀 Server running on port ${port}`);

@@ -3,6 +3,82 @@ import { Asset } from '../models/asset';
 import { AssetCategory, AssetType } from '../types/asset';
 import yahooFinance from 'yahoo-finance2';
 
+export const searchAssets = async (query: string): Promise<AssetType[]> => {
+  const results = await yahooFinance.search(query);
+
+  if (results.quotes && results.quotes.length > 0) {
+    const now = new Date();
+
+    const assets: AssetType[] = results.quotes.flatMap((asset: any) => {
+      const assetName = asset.longname || asset.name || asset.shortname;
+      const assetType = asset.quoteType === 'EQUITY' ? AssetCategory.Stock : (asset.quoteType === 'ETF' ? AssetCategory.Etf : null);
+      if (!assetName || !asset.symbol || !assetType) return [];
+
+      return {
+        name: assetName,
+        type: assetType,
+        price: 0,
+        symbol: asset.symbol.toUpperCase(),
+        image: "",
+        createdAt: now,
+        updatedAt: now,
+        uniqueKey: `${assetType}_${asset.symbol.toUpperCase()}`
+      };
+    });
+
+    return assets;
+  }  else {
+    console.log(results);
+    throw new Error('Unexpected response from yahoo finance API');
+  }
+}
+
+// Search response example
+// {
+//   explains: [],
+//   count: 3,
+//   quotes: [
+//     {
+//       exchange: 'NMS',
+//       shortname: 'Alphabet Inc.',
+//       quoteType: 'EQUITY',
+//       symbol: 'GOOG',
+//       index: 'quotes',
+//       score: 597831,
+//       typeDisp: 'Equity',
+//       longname: 'Alphabet Inc.',
+//       isYahooFinance: true
+//     },
+//     {
+//       index: '5167b830a941ed08d275f74473d13e91',
+//       name: 'Google for Startups',
+//       permalink: 'google-for-entrepreneurs',
+//       isYahooFinance: false
+//     },
+//     {
+//       index: '26e6817312a98f234d2fcf80fa1abc1c',
+//       name: 'Google Cloud Platform',
+//       permalink: 'google-cloud-platform',
+//       isYahooFinance: false
+//     }
+//   ],
+//   news: [],
+//   nav: [],
+//   lists: [],
+//   researchReports: [],
+//   totalTime: 20,
+//   timeTakenForQuotes: 414,
+//   timeTakenForNews: 0,
+//   timeTakenForAlgowatchlist: 400,
+//   timeTakenForPredefinedScreener: 400,
+//   timeTakenForCrunchbase: 400,
+//   timeTakenForNav: 400,
+//   timeTakenForResearchReports: 0
+// }
+
+
+
+
 const getAsset = async (type: AssetCategory, symbol: string): Promise<AssetType[]> => {
   const response = await yahooFinance.quote(symbol);
 
