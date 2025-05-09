@@ -7,6 +7,7 @@ import { getStock } from '../api-managers/fmp';
 import { syncAssetsWithDb } from '../utils/syncAssets';
 import { getCrypto } from '../api-managers/coincap';
 import { AssetDocument } from '../types/assetDocument';
+import { getEtf, getStock as getYFStock } from '../api-managers/yahooFinance';
 
 export const getAsset = async (req: Request, res: Response) => {
   console.log("Getting single asset")
@@ -120,9 +121,15 @@ const fetchAssetFromApi = async (key: string): Promise<AssetDocument | null> => 
   if (type && symbol) {
     switch (type) {
       case AssetCategory.Stock:
-        apiCallResult = await getStock(symbol);
+        try {
+          apiCallResult = await getStock(symbol);
+        } catch (error) {
+          console.error(error);
+          apiCallResult = await getYFStock(symbol);
+        }
         break;
       case AssetCategory.Etf:
+        apiCallResult = await getEtf(symbol);
         break;
       case AssetCategory.Crypto:
         apiCallResult = await getCrypto(symbol);
@@ -130,7 +137,7 @@ const fetchAssetFromApi = async (key: string): Promise<AssetDocument | null> => 
       default:
         throw new Error(`No individual fetch for ${type}`);
     }
-    if (apiCallResult !== undefined) {
+    if (apiCallResult !== undefined && apiCallResult.length > 0) {
       await syncAssetsWithDb(apiCallResult);
       asset = await Asset.findOne({ uniqueKey: key });
     }

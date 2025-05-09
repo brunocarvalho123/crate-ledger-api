@@ -7,7 +7,6 @@ import assetRoutes from './routes/assetRoutes';
 import { Asset } from './models/asset';
 import { syncCryptoAssetsJob } from './jobs/syncCryptoAssetsJob';
 import { syncCurrenciesJob } from './jobs/syncCurrenciesJob';
-import { getAsset } from './api-managers/yahooFinance';
 import { syncMetalAssetsJob } from './jobs/syncMetalAssetsJob';
 
 dotenv.config();
@@ -40,7 +39,6 @@ mongoose.connect(process.env.MONGODB_URI!)
       console.error('❌ Failed to initialize indexes:', error);
     }
 
-    // getAsset('CNDX.AS');
     // syncCryptoAssetsJob();
     // syncCurrenciesJob();
     // syncMetalAssetsJob();
