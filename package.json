@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node src/index.ts",
+    "test": "jest",
     "build": "tsc",
     "start": "node dist/index.js"
   },
@@ -29,8 +30,11 @@
   },
   "devDependencies": {
     "@types/express": "^5.x",
+    "@types/jest": "^29.x",
     "@types/mongoose": "^5.x",
     "@types/node": "^22.x",
+    "jest": "^29.x",
+    "ts-jest": "^29.x",
     "ts-node-dev": "^2.x",
     "typescript": "^5.x"
   }

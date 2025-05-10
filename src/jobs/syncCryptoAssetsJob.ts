@@ -1,5 +1,5 @@
 // src/jobs/syncCryptoAssetsJob.ts
-import { getAllAssetsInfo } from '../api-managers/coingecko';
+import { getAllAssetsInfo } from '../services/coingecko';
 import { syncAssetsWithDb } from '../utils/syncAssets';
 
 const SYNC_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes

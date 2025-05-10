@@ -1,5 +1,5 @@
 // src/jobs/syncMetalAssetsJob.ts
-import { getAllMetals } from '../api-managers/metalprices';
+import { getAllMetals } from '../services/metalprices';
 import { syncAssetsWithDb } from '../utils/syncAssets';
 
 const SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24 hours

@@ -8,7 +8,7 @@ import { Asset } from './models/asset';
 import { syncCryptoAssetsJob } from './jobs/syncCryptoAssetsJob';
 import { syncCurrenciesJob } from './jobs/syncCurrenciesJob';
 import { syncMetalAssetsJob } from './jobs/syncMetalAssetsJob';
-import { searchAssets } from './api-managers/yahooFinance';
+import { searchAssets } from './services/yahooFinance';
 
 dotenv.config();
 

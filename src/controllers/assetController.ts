@@ -3,11 +3,11 @@ import { Request, Response } from 'express';
 import { Asset } from '../models/asset';
 import { AssetCategory, AssetType, toAssetCategory } from '../types/asset';
 import { serializeAsset, serializeAssets } from '../utils/serializeAssets'
-import { getStock } from '../api-managers/fmp';
+import { getStock } from '../services/fmp';
 import { syncAssetsWithDb } from '../utils/syncAssets';
-import { getCrypto } from '../api-managers/coincap';
+import { getCrypto } from '../services/coincap';
 import { AssetDocument } from '../types/assetDocument';
-import { getEtf, getStock as getYFStock } from '../api-managers/yahooFinance';
+import { getEtf, getStock as getYFStock } from '../services/yahooFinance';
 
 export const getAsset = async (req: Request, res: Response) => {
   console.log("Getting single asset")
