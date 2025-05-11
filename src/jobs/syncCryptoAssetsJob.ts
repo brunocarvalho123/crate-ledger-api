@@ -4,9 +4,13 @@ import { syncAssetsWithDb } from '../utils/syncAssets';
 
 export const syncCryptoAssets = async () => {
   console.log('🔄 Syncing crypto assets...');
-  const geckoAssets = await getAllAssetsInfo();
-  await syncAssetsWithDb(geckoAssets);
-  console.log('✅ Asset sync complete');
+  try {
+    const geckoAssets = await getAllAssetsInfo();
+    await syncAssetsWithDb(geckoAssets);
+    console.log('✅ Crypto assets sync complete');  
+  } catch (error) {
+    console.error('❌ Error during Crypto assets sync:', error);
+  }
 };
 
 export const startSyncCryptoAssetsJob = () => {

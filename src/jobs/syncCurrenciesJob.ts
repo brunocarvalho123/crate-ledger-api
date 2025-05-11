@@ -3,25 +3,19 @@ import { getAllCurrencies, getAvailableCurrencies } from '../services/frankfurte
 import { CurrencyMap } from '../types/currencyMap';
 import { syncAssetsWithDb } from '../utils/syncAssets';
 
-const SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24 hours
+export const syncCurrencies = async (availableCurrencies: CurrencyMap) => {
+  console.log('🔄 Syncing currencies...');
+  try {
+    const currencies = await getAllCurrencies(availableCurrencies);
+    await syncAssetsWithDb(currencies);
+    console.log('✅ Currency sync complete');  
+  } catch (error) {
+    console.error('❌ Error during Currency sync:', error);
+  }
+};
 
-export const syncCurrenciesJob = async () => {
-  
-  const syncCurrencies = async (availableCurrencies: CurrencyMap) => {
-    try {
-      console.log('🔄 Syncing currencies...');
-      const currencies = await getAllCurrencies(availableCurrencies);
-      await syncAssetsWithDb(currencies);
-      console.log('✅ Currency sync complete');
-    } catch (err) {
-      console.error('❌ Error during Currency sync:', err);
-    }
-  };
-
-  // Run immediately on start
+export const startSyncCurrenciesJob = async () => {
   const availableCurrencies = await getAvailableCurrencies();
   syncCurrencies(availableCurrencies);
-
-  // Schedule repeated runs
-  setInterval(syncCurrencies, SYNC_INTERVAL_MS);
+  setInterval(syncCurrencies, 24 * 60 * 60 * 1000);
 };

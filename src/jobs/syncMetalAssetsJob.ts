@@ -4,9 +4,13 @@ import { syncAssetsWithDb } from '../utils/syncAssets';
 
 export const syncMetalAssets = async () => {
   console.log('🔄 Syncing metal assets...');
-  const metalAssets = await getAllMetals();
-  await syncAssetsWithDb(metalAssets);
-  console.log('✅ Asset sync complete');
+  try {
+    const metalAssets = await getAllMetals();
+    await syncAssetsWithDb(metalAssets);
+    console.log('✅ Metal assets sync complete');  
+  } catch (error) {
+    console.error('❌ Error during Metal assets sync:', error);
+  }
 };
 
 export const startSyncMetalAssetsJob = () => {

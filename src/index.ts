@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import assetRoutes from './routes/assetRoutes';
 import { Asset } from './models/asset';
 import { startSyncCryptoAssetsJob } from './jobs/syncCryptoAssetsJob';
-import { syncCurrenciesJob } from './jobs/syncCurrenciesJob';
+import { startSyncCurrenciesJob } from './jobs/syncCurrenciesJob';
 import { startSyncMetalAssetsJob } from './jobs/syncMetalAssetsJob';
 import { searchAssets } from './services/yahooFinance';
 
@@ -40,9 +40,9 @@ mongoose.connect(process.env.MONGODB_URI!)
       console.error('❌ Failed to initialize indexes:', error);
     }
 
-    // startSyncCryptoAssetsJob();
-    // syncCurrenciesJob();
-    // startSyncMetalAssetsJob();
+    startSyncCryptoAssetsJob();
+    startSyncMetalAssetsJob();
+    startSyncCurrenciesJob();
     // const results = await searchAssets('goo');
     // console.log(results);
     
