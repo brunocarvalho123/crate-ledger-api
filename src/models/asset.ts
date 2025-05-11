@@ -13,4 +13,7 @@ const assetSchema = new mongoose.Schema<AssetType>({
   uniqueKey: { type: String, required: true, unique: true } // e.g., "crypto_BTC"
 });
 
+// Create a text index on the 'name' and 'symbol' fields
+assetSchema.index({ name: 'text', symbol: 'text' });
+
 export const Asset = mongoose.model<AssetType>('Asset', assetSchema);

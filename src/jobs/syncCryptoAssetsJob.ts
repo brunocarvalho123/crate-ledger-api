@@ -2,7 +2,7 @@
 import { getAllAssetsInfo } from '../services/coingecko';
 import { UnexpectedApiData } from '../utils/errors/serviceErrors';
 import logger from '../utils/logger';
-import { syncAssetsWithDb } from '../utils/syncAssets';
+import { syncAssetsWithDb } from '../utils/db/syncAssets';
 
 export const syncCryptoAssets = async () => {
   logger.info('🔄 Syncing crypto assets...');

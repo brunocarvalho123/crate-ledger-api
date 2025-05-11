@@ -6,12 +6,15 @@ import { fetchAssetFromApi } from '../../src/utils/fetchAssetFromApi';
 import { serializeAsset, serializeAssets } from '../../src/utils/serializeAssets';
 import { AssetDocument } from '../../src/types/assetDocument';
 import { searchYahoo } from '../../src/services/yahooFinance';
+import { searchDb } from '../../src/utils/db/search';
+import { AssetCategory } from '../../src/types/asset';
 
 jest.mock('../../src/models/asset');
 jest.mock('../../src/utils/isAssetStale');
 jest.mock('../../src/utils/fetchAssetFromApi');
 jest.mock('../../src/utils/serializeAssets');
 jest.mock('../../src/services/yahooFinance');
+jest.mock('../../src/utils/db/search');
 
 const mockRes = () => {
   const res: any = {};
@@ -111,22 +114,51 @@ describe('assetController', () => {
       expect(res.json).toHaveBeenCalledWith({ error: 'Search query parameter is required' });
     });
 
-    it('returns search results', async () => {
+    it('returns search results with no type filter', async () => {
       const req: any = { query: { query: 'goog' } };
       const res = mockRes();
 
-      const searchResults = [
+      const searchResultsYahoo = [
         {"name":"Alphabet Inc.","type":"stock","symbol":"GOOG"},
-        {"name":"Alphabet Inc.","type":"stock","symbol":"GOOGL"},
-        {"name":"Direxion Daily GOOGL Bull 2X Shares","type":"etf","symbol":"GGLL"}
+        {"name":"Alphabet Inc.","type":"stock","symbol":"GOOGL"}
       ];
 
-      (searchYahoo as jest.Mock).mockResolvedValue(searchResults);
+      const searchResultsDb = [
+        {"name":"Bitcoin.","type":"crypto","symbol":"BTC"},
+        {"name":"Ethereum.","type":"crypto","symbol":"ETH"},
+      ];
+
+      (searchDb as jest.Mock).mockResolvedValue(searchResultsDb);
+      (searchYahoo as jest.Mock).mockResolvedValue(searchResultsYahoo);
 
       await searchAssets(req, res);
 
       expect(searchYahoo).toHaveBeenCalledWith('goog');
-      expect(res.json).toHaveBeenCalledWith(searchResults);
+      expect(searchDb).toHaveBeenCalledWith('goog');
+      expect(res.json).toHaveBeenCalledWith([...searchResultsDb,...searchResultsYahoo]);
+    });
+
+    it('returns search results with type', async () => {
+      const req: any = { query: { query: 'goog', type: AssetCategory.Crypto } };
+      const res = mockRes();
+
+      const searchResultsYahoo = [
+        {"name":"Alphabet Inc.","type":"stock","symbol":"GOOG"},
+        {"name":"Alphabet Inc.","type":"stock","symbol":"GOOGL"}
+      ];
+
+      const searchResultsDb = [
+        {"name":"Bitcoin.","type":"crypto","symbol":"BTC"},
+        {"name":"Ethereum.","type":"crypto","symbol":"ETH"},
+      ];
+
+      (searchDb as jest.Mock).mockResolvedValue(searchResultsDb);
+      (searchYahoo as jest.Mock).mockResolvedValue(searchResultsYahoo);
+
+      await searchAssets(req, res);
+
+      expect(searchDb).toHaveBeenCalledWith('goog', AssetCategory.Crypto);
+      expect(res.json).toHaveBeenCalledWith(searchResultsDb);
     });
   });
 });

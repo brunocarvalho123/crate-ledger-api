@@ -2,12 +2,12 @@
 import { syncCurrencies, startSyncCurrenciesJob } from '../../src/jobs/syncCurrenciesJob';
 import { getAllCurrencies, getAvailableCurrencies } from '../../src/services/frankfurter';
 import logger from '../../src/utils/logger';
-import { syncAssetsWithDb } from '../../src/utils/syncAssets';
+import { syncAssetsWithDb } from '../../src/utils/db/syncAssets';
 import { UnexpectedApiData } from '../../src/utils/errors/serviceErrors';
 
 // Mock the external dependencies
 jest.mock('../../src/services/frankfurter');
-jest.mock('../../src/utils/syncAssets');
+jest.mock('../../src/utils/db/syncAssets');
 jest.mock('../../src/utils/logger');
 
 const mockedLogger = logger as jest.Mocked<typeof logger>;

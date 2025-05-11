@@ -3,7 +3,7 @@ import { fetchAssetFromApi } from '../../src/utils/fetchAssetFromApi';
 import { getStock as fmpGetStock } from '../../src/services/fmp';
 import { getStock as yfGetStock, getEtf } from '../../src/services/yahooFinance';
 import { getCrypto } from '../../src/services/coincap';
-import { syncAssetsWithDb } from '../../src/utils/syncAssets';
+import { syncAssetsWithDb } from '../../src/utils/db/syncAssets';
 import { Asset } from '../../src/models/asset';
 import { AssetCategory, AssetType } from '../../src/types/asset';
 
@@ -11,7 +11,7 @@ import { AssetCategory, AssetType } from '../../src/types/asset';
 jest.mock('../../src/services/fmp');
 jest.mock('../../src/services/yahooFinance');
 jest.mock('../../src/services/coincap');
-jest.mock('../../src/utils/syncAssets');
+jest.mock('../../src/utils/db/syncAssets');
 jest.mock('../../src/models/asset');
 
 const mockAsset: AssetType = {

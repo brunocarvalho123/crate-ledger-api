@@ -1,9 +1,9 @@
-// tests/utils/syncAssets.test.ts
-import { syncAssetsWithDb } from '../../src/utils/syncAssets';
-import { Asset } from '../../src/models/asset';
-import { AssetType, AssetCategory } from '../../src/types/asset';
+// tests/utils/db/syncAssets.test.ts
+import { syncAssetsWithDb } from '../../../src/utils/db/syncAssets';
+import { Asset } from '../../../src/models/asset';
+import { AssetType, AssetCategory } from '../../../src/types/asset';
 
-jest.mock('../../src/models/asset', () => ({
+jest.mock('../../../src/models/asset', () => ({
   Asset: {
     bulkWrite: jest.fn()
   }

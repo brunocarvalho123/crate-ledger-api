@@ -8,6 +8,8 @@ import { fetchAssetFromApi } from '../utils/fetchAssetFromApi';
 import { searchYahoo } from '../services/yahooFinance';
 import { SearchQueryTooShort, UnexpectedApiData } from '../utils/errors/serviceErrors';
 import logger from '../utils/logger';
+import { AssetCategory, AssetSearchResult, toAssetCategory } from '../types/asset';
+import { searchDb } from '../utils/db/search';
 
 export const getAsset = async (req: Request, res: Response) => {
   const id = req.params.id;
@@ -70,12 +72,25 @@ export const getAssets = async (req: Request, res: Response) => {
 
 export const searchAssets = async (req: Request, res: Response) => {
   const searchParam = req.query?.query as string;
+  const typeParam = toAssetCategory(req.query?.type as string);
   if (!searchParam) {
     res.status(400).json({ error: 'Search query parameter is required' });
     return;
   }
   try {
-    const results = await searchYahoo(searchParam);  
+    let results: AssetSearchResult[] = [];
+    if (typeParam) {
+      if (typeParam == AssetCategory.Etf || typeParam == AssetCategory.Stock) {
+        results = await searchYahoo(searchParam);
+      }
+      const dbResults = await searchDb(searchParam, typeParam);
+      results = [...results, ...dbResults];
+    } else {
+      const dbResults = await searchDb(searchParam);
+      const yahooResults = await searchYahoo(searchParam);
+      results = [...dbResults, ...yahooResults];
+    }
+    
     res.json(results);
     return;
   } catch (error) {

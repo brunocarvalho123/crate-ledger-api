@@ -3,7 +3,7 @@ import { getAllCurrencies, getAvailableCurrencies } from '../services/frankfurte
 import { CurrencyMap } from '../types/currencyMap';
 import { UnexpectedApiData } from '../utils/errors/serviceErrors';
 import logger from '../utils/logger';
-import { syncAssetsWithDb } from '../utils/syncAssets';
+import { syncAssetsWithDb } from '../utils/db/syncAssets';
 
 export const syncCurrencies = async (availableCurrencies: CurrencyMap) => {
   logger.info('🔄 Syncing currencies...');

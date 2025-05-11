@@ -1,7 +1,7 @@
-// src/utils/syncAssets.ts
-import { Asset } from '../models/asset';
-import { AssetType } from '../types/asset';
-import logger from './logger';
+// src/utils/db/syncAssets.ts
+import { Asset } from '../../models/asset';
+import { AssetType } from '../../types/asset';
+import logger from '../logger';
 
 export const syncAssetsWithDb = async (assets: AssetType[]) => {
   const now = new Date();

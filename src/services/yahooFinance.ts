@@ -78,8 +78,6 @@ export const searchYahoo = async (query: string): Promise<AssetSearchResult[]> =
 // }
 
 
-
-
 const getAsset = async (type: AssetCategory, symbol: string): Promise<AssetType[]> => {
   const response = await yahooFinance.quote(symbol);
 

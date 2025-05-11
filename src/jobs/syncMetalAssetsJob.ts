@@ -2,7 +2,7 @@
 import { getAllMetals } from '../services/metalprices';
 import { UnexpectedApiData } from '../utils/errors/serviceErrors';
 import logger from '../utils/logger';
-import { syncAssetsWithDb } from '../utils/syncAssets';
+import { syncAssetsWithDb } from '../utils/db/syncAssets';
 
 export const syncMetalAssets = async () => {
   logger.info('🔄 Syncing metal assets...');
