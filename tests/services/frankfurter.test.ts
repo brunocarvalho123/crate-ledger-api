@@ -1,3 +1,4 @@
+// tests/services/frankfurter.test.ts
 import axios from 'axios';
 import { getAvailableCurrencies, getAllCurrencies } from '../../src/services/frankfurter';
 import { AssetCategory } from '../../src/types/asset';
@@ -67,5 +68,60 @@ describe('Frankfurter Currency Service', () => {
 
       await expect(getAllCurrencies(availableCurrencies)).rejects.toThrow('API down');
     });
+  });
+
+  it('USD should be 1', async () => {
+    const availableCurrencies = {
+      USD: 'USD Dollar',
+      GBP: 'British Pound'
+    };
+
+    const badRates = {
+      GBP: 0.89
+    };
+
+    mockedAxios.get.mockResolvedValue({
+      data: {
+        base: "USD",
+        date: "2025-05-08",
+        rates: badRates
+      }
+    });
+
+    const result = await getAllCurrencies(availableCurrencies);
+    expect(result).toHaveLength(2);
+    expect(result[0]).toMatchObject({
+      name: 'USD Dollar',
+      symbol: 'USD',
+      type: AssetCategory.Cash,
+      price: 1
+    });
+    expect(result[1]).toMatchObject({
+      name: 'British Pound',
+      symbol: 'GBP',
+      type: AssetCategory.Cash,
+      price: 1 / 0.89
+    });
+  });
+
+  it('should throw on invalid data', async () => {
+    const availableCurrencies = {
+      USD: 'USD Dollar',
+      GBP: 'British Pound'
+    };
+
+    const badRates = {
+      GBP: 'not-a-number'
+    };
+
+    mockedAxios.get.mockResolvedValue({
+      data: {
+        base: "USD",
+        date: "2025-05-08",
+        rates: badRates
+      }
+    });
+
+    await expect(getAllCurrencies(availableCurrencies)).rejects.toThrow('Missing rate for symbol: GBP');
   });
 });

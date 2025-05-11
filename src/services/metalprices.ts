@@ -35,7 +35,10 @@ export const getAllMetals = async (): Promise<AssetType[]> => {
   if (response?.data && response.data["success"]) {
     const now = new Date();
     const assets: AssetType[] = Object.entries(trackedMetals).map(([symbol, name]) => {
-      const price = (1.0/response.data["rates"][symbol]) || 1;
+      const rawRate = response.data.rates[symbol];
+      if (!rawRate || typeof rawRate != 'number') throw new Error(`Missing rate for metal: ${symbol}`);
+      const price = 1.0 / rawRate;
+
 
       if (typeof symbol !== 'string' || typeof name !== 'string' || typeof price !== 'number') {
         throw new Error(`Invalid data: symbol=${symbol}, name=${name}, price=${price}`);

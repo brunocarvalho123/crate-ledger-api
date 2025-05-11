@@ -1,3 +1,4 @@
+// tests/services/fmp.test.ts
 import axios from 'axios';
 import { getStock } from '../../src/services/fmp';
 import { AssetCategory } from '../../src/types/asset';

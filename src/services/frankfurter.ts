@@ -27,7 +27,10 @@ export const getAllCurrencies = async (availableCurrencies: CurrencyMap): Promis
     const now = new Date();
 
     const assets: AssetType[] = Object.entries(availableCurrencies).map(([symbol, name]) => {
-      const price = (1.0/response.data["rates"][symbol]) || 1;
+      const rawRate = response.data.rates[symbol];
+      if ((!rawRate || typeof rawRate !== 'number') && symbol !== 'USD') throw new Error(`Missing rate for symbol: ${symbol}`);
+      const price = symbol === 'USD' ? 1.0 : (1.0 / rawRate);
+
     
       if (typeof symbol !== 'string' || typeof name !== 'string' || typeof price !== 'number') {
         throw new Error(`Invalid data: symbol=${symbol}, name=${name}, price=${price}`);
