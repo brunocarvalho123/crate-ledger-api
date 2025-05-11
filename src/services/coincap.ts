@@ -1,4 +1,4 @@
-// src/api-managers/coincap.ts
+// src/services/coincap.ts
 import axios from 'axios';
 import dotenv from 'dotenv';
 import { AssetCategory, AssetType } from '../types/asset';
@@ -7,29 +7,6 @@ dotenv.config();
 
 const baseUrl = "https://rest.coincap.io/v3";
 const token = process.env.COINCAP_API_TOKEN!;
-
-// rates api, assetsId is an array of the assets id in coincaps api
-// use this to update the USD price
-export const getMarketRate = async (assetsId: string[]) => {
-  const fullUrl = `${baseUrl}/rates?ids=${assetsId.join(',')}`;
-
-  console.log(`Calling CoinCap API with url: ${fullUrl}`);
-  
-  const response = await axios.get(fullUrl, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  });
-
-  if (response?.data?.data) {
-    const assetsData = response.data.data;
-    return assetsData;
-  } else if (response?.data?.data === null) {
-    throw new Error('Asset not found');
-  } else {
-    throw new Error('Unexpected response from CoinCap API');
-  }
-}
 
 // assets api, find asset information by symbol
 export const getCrypto = async (symbol: string): Promise<AssetType[]> => {
@@ -54,28 +31,6 @@ export const getCrypto = async (symbol: string): Promise<AssetType[]> => {
       updatedAt: now
     }));
     return asset;
-  } else if (response?.data?.data === null) {
-    throw new Error('Asset not found');
-  } else {
-    throw new Error('Unexpected response from CoinCap API');
-  }
-}
-
-// assets api, find multiple assets information by coincap id
-export const getAssetsInfo = async (assetsId: string[]) => {
-  const fullUrl = `${baseUrl}/assets?ids=${assetsId.join(',')}`;
-
-  console.log(`Calling CoinCap API with url: ${fullUrl}`);
-  
-  const response = await axios.get(fullUrl, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  });
-
-  if (response?.data?.data) {
-    const assetsData = response.data.data;
-    return assetsData;
   } else if (response?.data?.data === null) {
     throw new Error('Asset not found');
   } else {

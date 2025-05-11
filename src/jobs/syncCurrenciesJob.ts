@@ -1,12 +1,13 @@
 // src/jobs/syncCurrenciesJob.ts
 import { getAllCurrencies, getAvailableCurrencies } from '../services/frankfurter';
+import { CurrencyMap } from '../types/currencyMap';
 import { syncAssetsWithDb } from '../utils/syncAssets';
 
 const SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export const syncCurrenciesJob = async () => {
   
-  const syncCurrencies = async (availableCurrencies: any) => {
+  const syncCurrencies = async (availableCurrencies: CurrencyMap) => {
     try {
       console.log('🔄 Syncing currencies...');
       const currencies = await getAllCurrencies(availableCurrencies);

@@ -1,4 +1,4 @@
-// src/api-managers/yahooFinance.ts
+// src/services/yahooFinance.ts
 import { Asset } from '../models/asset';
 import { AssetCategory, AssetType } from '../types/asset';
 import yahooFinance from 'yahoo-finance2';
@@ -96,6 +96,8 @@ const getAsset = async (type: AssetCategory, symbol: string): Promise<AssetType[
       if (currency) {
         // We always store prices in USD
         assetPrice = assetPrice * currency.price;
+      } else {
+        console.warn(`Currency ${response.currency} not found in DB. Skipping conversion.`);
       }
     }
 

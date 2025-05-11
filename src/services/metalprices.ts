@@ -1,4 +1,4 @@
-// src/api-managers/metalprices.ts
+// src/services/metalprices.ts
 import axios from 'axios';
 import dotenv from 'dotenv';
 import { AssetCategory, AssetType } from '../types/asset';
@@ -21,10 +21,15 @@ export const getAllMetals = async (): Promise<AssetType[]> => {
   const commaSeparatedMetals = Object.entries(trackedMetals).map(([symbol]) => {
     return symbol
   }).join(',');
-  const fullUrl = `${baseUrl}/latest?api_key=${token}&base=USD&currencies=${commaSeparatedMetals}`;
+  const params = new URLSearchParams({
+    api_key: token,
+    base: 'USD',
+    currencies: commaSeparatedMetals
+  });
+  const fullUrl = `${baseUrl}/latest?${params.toString()}`;
 
   console.log(`Calling metalprices API with url: ${fullUrl}`);
-  
+
   const response = await axios.get(fullUrl);
 
   if (response?.data && response.data["success"]) {
@@ -54,7 +59,6 @@ export const getAllMetals = async (): Promise<AssetType[]> => {
   }
 }
 
-
 // Example response from metalsapi
 // {
 //   success: true,
@@ -69,6 +73,3 @@ export const getAllMetals = async (): Promise<AssetType[]> => {
 //     ANG: 1.80229
 //   }
 // }
-  
-
-

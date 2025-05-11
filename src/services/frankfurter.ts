@@ -1,6 +1,7 @@
-// src/api-managers/frankfurter.ts
+// src/services/frankfurter.ts
 import axios from 'axios';
 import { AssetCategory, AssetType } from '../types/asset';
+import { CurrencyMap } from '../types/currencyMap';
 
 const baseUrl = "https://api.frankfurter.dev/v1";
 
@@ -15,7 +16,7 @@ export const getAvailableCurrencies = async () => {
   }
 }
 
-export const getAllCurrencies = async (availableCurrencies: any): Promise<AssetType[]> => {
+export const getAllCurrencies = async (availableCurrencies: CurrencyMap): Promise<AssetType[]> => {
   const fullUrl = `${baseUrl}/latest?base=USD`;
 
   console.log(`Calling frankfurter API with url: ${fullUrl}`);
@@ -49,3 +50,15 @@ export const getAllCurrencies = async (availableCurrencies: any): Promise<AssetT
     throw new Error('Unexpected response from frankfurter API');
   }
 }
+
+// Sample response from frankfurter /latest API
+// {
+//   "base": "USD",
+//   "date": "2025-05-08",
+//   "rates": {
+//     "AUD": 1.5584,
+//     "BGN": 1.7313,
+//     "BRL": 5.7462,
+//     "CAD": 1.3892
+//   }
+// }

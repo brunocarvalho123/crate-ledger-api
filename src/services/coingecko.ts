@@ -1,4 +1,4 @@
-// src/api-managers/coingecko.ts
+// src/services/coingecko.ts
 import axios from 'axios';
 import dotenv from 'dotenv';
 import { AssetType, AssetCategory } from '../types/asset';
@@ -7,7 +7,6 @@ dotenv.config();
 
 const baseUrl = "https://api.coingecko.com/api/v3";
 const token = process.env.COINGECKO_API_TOKEN!;
-
 
 // Use this to get the data to update the top 250 assets
 export const getAllAssetsInfo = async (): Promise<AssetType[]> => {
