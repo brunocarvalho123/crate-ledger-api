@@ -33,9 +33,10 @@ export const isAssetStale = (asset: AssetDocument): boolean => {
     }
 
     if ((now.getTime() - assetUpdatedAt.getTime()) > staleTime) {
-      console.log(`${asset.symbol} is stale...`)
-      return true
+      return true;
+    }  else {
+      return false;
     }
   }
-  return false;
+  throw new Error('Cant check for stale: asset has invalid updatedAt');
 }

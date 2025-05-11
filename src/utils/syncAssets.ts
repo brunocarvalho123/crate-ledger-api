@@ -35,7 +35,6 @@ export const syncAssetsWithDb = async (assets: AssetType[]) => {
     console.log(`syncAssetsWithDb: Matched ${result.matchedCount}, Upserted ${result.upsertedCount}, Modified ${result.modifiedCount}`);
     return result;
   } catch (err) {
-    console.error('syncAssetsWithDb: Bulk operation failed:', err);
     throw err;
   }
 };
