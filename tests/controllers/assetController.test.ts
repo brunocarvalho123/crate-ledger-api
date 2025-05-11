@@ -1,15 +1,18 @@
 // tests/controllers/assetController.test.ts
-import { getAsset, getAssets } from '../../src/controllers/assetController';
+import { getAsset, getAssets, searchAssets } from '../../src/controllers/assetController';
 import { Asset } from '../../src/models/asset';
 import { isAssetStale } from '../../src/utils/isAssetStale';
 import { fetchAssetFromApi } from '../../src/utils/fetchAssetFromApi';
 import { serializeAsset, serializeAssets } from '../../src/utils/serializeAssets';
 import { AssetDocument } from '../../src/types/assetDocument';
+import { AssetSearchResult } from '../../src/types/asset';
+import { searchYahoo } from '../../src/services/yahooFinance';
 
 jest.mock('../../src/models/asset');
 jest.mock('../../src/utils/isAssetStale');
 jest.mock('../../src/utils/fetchAssetFromApi');
 jest.mock('../../src/utils/serializeAssets');
+jest.mock('../../src/services/yahooFinance');
 
 const mockRes = () => {
   const res: any = {};
@@ -82,7 +85,6 @@ describe('assetController', () => {
       const res = mockRes();
 
       const staleAsset = { uniqueKey: 'stock_TEST' } as AssetDocument;
-      const freshAsset = { uniqueKey: 'crypto_BTC' } as AssetDocument;
       const fetchedAsset = { uniqueKey: 'stock_TEST' } as AssetDocument;
 
       (Asset.find as jest.Mock).mockResolvedValue([staleAsset]);
@@ -96,6 +98,36 @@ describe('assetController', () => {
       expect(fetchAssetFromApi).toHaveBeenCalledWith('crypto_BTC');
       expect(fetchAssetFromApi).toHaveBeenCalledWith('stock_TEST');
       expect(res.json).toHaveBeenCalledWith([{ serialized: true }]);
+    });
+  });
+
+  describe('searchAssets', () => {
+    it('returns 400 if search query param is missing', async () => {
+      const req: any = { query: {} };
+      const res = mockRes();
+
+      await searchAssets(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Search query parameter is required' });
+    });
+
+    it('returns search results', async () => {
+      const req: any = { query: { query: 'goog' } };
+      const res = mockRes();
+
+      const searchResults = [
+        {"name":"Alphabet Inc.","type":"stock","symbol":"GOOG"},
+        {"name":"Alphabet Inc.","type":"stock","symbol":"GOOGL"},
+        {"name":"Direxion Daily GOOGL Bull 2X Shares","type":"etf","symbol":"GGLL"}
+      ];
+
+      (searchYahoo as jest.Mock).mockResolvedValue(searchResults);
+
+      await searchAssets(req, res);
+
+      expect(searchYahoo).toHaveBeenCalledWith('goog');
+      expect(res.json).toHaveBeenCalledWith(searchResults);
     });
   });
 });

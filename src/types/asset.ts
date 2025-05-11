@@ -26,4 +26,9 @@ export interface AssetType {
   createdAt?: Date;
   uniqueKey: string;
 }
-  
+
+export interface AssetSearchResult {
+  name: string;
+  type: AssetCategory;
+  symbol: string;
+}

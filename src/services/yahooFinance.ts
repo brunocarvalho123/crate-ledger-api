@@ -1,15 +1,15 @@
 // src/services/yahooFinance.ts
 import { Asset } from '../models/asset';
-import { AssetCategory, AssetType } from '../types/asset';
+import { AssetCategory, AssetSearchResult, AssetType } from '../types/asset';
 import yahooFinance from 'yahoo-finance2';
 
-export const searchAssets = async (query: string): Promise<AssetType[]> => {
+export const searchYahoo = async (query: string): Promise<AssetSearchResult[]> => {
   const results = await yahooFinance.search(query);
 
   if (results.quotes && results.quotes.length > 0) {
     const now = new Date();
 
-    const assets: AssetType[] = results.quotes.flatMap((asset: any) => {
+    const assets: AssetSearchResult[] = results.quotes.flatMap((asset: any) => {
       const assetName = asset.longname || asset.name || asset.shortname;
       const assetType = asset.quoteType === 'EQUITY' ? AssetCategory.Stock : (asset.quoteType === 'ETF' ? AssetCategory.Etf : null);
       if (!assetName || !asset.symbol || !assetType) return [];
@@ -17,12 +17,7 @@ export const searchAssets = async (query: string): Promise<AssetType[]> => {
       return {
         name: assetName,
         type: assetType,
-        price: 0,
-        symbol: asset.symbol.toUpperCase(),
-        image: "",
-        createdAt: now,
-        updatedAt: now,
-        uniqueKey: `${assetType}_${asset.symbol.toUpperCase()}`
+        symbol: asset.symbol.toUpperCase()
       };
     });
 

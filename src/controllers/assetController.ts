@@ -5,6 +5,7 @@ import { serializeAsset, serializeAssets } from '../utils/serializeAssets'
 import { AssetDocument } from '../types/assetDocument';
 import { isAssetStale } from '../utils/isAssetStale';
 import { fetchAssetFromApi } from '../utils/fetchAssetFromApi';
+import { searchYahoo } from '../services/yahooFinance';
 
 export const getAsset = async (req: Request, res: Response) => {
   const id = req.params.id;
@@ -32,7 +33,7 @@ export const getAsset = async (req: Request, res: Response) => {
 };
 
 export const getAssets = async (req: Request, res: Response) => {
-  const keysParam = req.query.keys as string;
+  const keysParam = req.query?.keys as string;
   console.log(keysParam);
   
   if (!keysParam) {
@@ -74,3 +75,19 @@ export const getAssets = async (req: Request, res: Response) => {
     return;
   }
 };
+
+export const searchAssets = async (req: Request, res: Response) => {
+  const searchParam = req.query?.query as string;
+  if (!searchParam) {
+    res.status(400).json({ error: 'Search query parameter is required' });
+    return;
+  }
+  try {
+    const results = await searchYahoo(searchParam);  
+    res.json(results);
+    return;
+  } catch (err) {
+    res.status(500).json({ message: 'Error searching assets', error: err });
+    return;
+  }
+}

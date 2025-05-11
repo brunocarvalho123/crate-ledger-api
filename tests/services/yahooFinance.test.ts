@@ -1,5 +1,5 @@
 // tests/services/yahooFinance.test.ts
-import { searchAssets, getStock, getEtf } from '../../src/services/yahooFinance';
+import { searchYahoo, getStock, getEtf } from '../../src/services/yahooFinance';
 import yahooFinance from 'yahoo-finance2';
 import { Asset } from '../../src/models/asset';
 import { AssetCategory } from '../../src/types/asset';
@@ -11,7 +11,7 @@ const mockedYahoo = yahooFinance as jest.Mocked<typeof yahooFinance>;
 const mockedAssetModel = Asset as jest.Mocked<typeof Asset>;
 
 describe('yahooFinance service', () => {
-  describe('searchAssets', () => {
+  describe('searchYahoo', () => {
     it('should return a list of valid assets', async () => {
       mockedYahoo.search.mockResolvedValue({
         quotes: [
@@ -31,7 +31,7 @@ describe('yahooFinance service', () => {
         ],
       } as any);
 
-      const result = await searchAssets('goog');
+      const result = await searchYahoo('goog');
 
       expect(result).toHaveLength(2);
       expect(result[0]).toMatchObject({
@@ -49,7 +49,7 @@ describe('yahooFinance service', () => {
     it('should throw an error for invalid API response', async () => {
       mockedYahoo.search.mockResolvedValue({ quotes: null } as any);
 
-      await expect(searchAssets('abc')).rejects.toThrow('Unexpected response from yahoo finance API');
+      await expect(searchYahoo('abc')).rejects.toThrow('Unexpected response from yahoo finance API');
     });
   });
 
