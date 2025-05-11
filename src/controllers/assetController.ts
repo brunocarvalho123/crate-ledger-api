@@ -7,7 +7,6 @@ import { isAssetStale } from '../utils/isAssetStale';
 import { fetchAssetFromApi } from '../utils/fetchAssetFromApi';
 
 export const getAsset = async (req: Request, res: Response) => {
-  console.log("Getting single asset")
   const id = req.params.id;
 
   if (!id) {
@@ -25,17 +24,20 @@ export const getAsset = async (req: Request, res: Response) => {
 
     console.log(asset)
     res.json(serializeAsset(asset));
+    return;
   } catch (err) {
     res.status(500).json({ message: 'Error fetching assets', error: err });
+    return;
   }
 };
 
 export const getAssets = async (req: Request, res: Response) => {
-  console.log("Getting multiple assets");
-
   const keysParam = req.query.keys as string;
+  console.log(keysParam);
+  
   if (!keysParam) {
     res.status(400).json({ error: 'keys query parameter is required' });
+    return;
   }
 
   const uniqueKeys = keysParam.split(',').map(k => k.trim());
@@ -65,8 +67,10 @@ export const getAssets = async (req: Request, res: Response) => {
     }
 
     res.json(serializeAssets(finalAssets));
+    return;
   } catch (err) {
     console.error('Unexpected error:', err);
     res.status(500).json({ message: 'Error fetching assets', error: err });
+    return;
   }
 };
