@@ -4,14 +4,21 @@ import yahooFinance from 'yahoo-finance2';
 import { Asset } from '../../src/models/asset';
 import { AssetCategory } from '../../src/types/asset';
 import { UnexpectedApiData } from '../../src/utils/errors/serviceErrors';
+import logger from '../../src/utils/logger';
 
 jest.mock('yahoo-finance2');
 jest.mock('../../src/models/asset');
+jest.mock('../../src/utils/logger');
 
 const mockedYahoo = yahooFinance as jest.Mocked<typeof yahooFinance>;
 const mockedAssetModel = Asset as jest.Mocked<typeof Asset>;
+const mockedLogger = logger as jest.Mocked<typeof logger>;
 
 describe('yahooFinance service', () => {
+  beforeEach(() => {
+    jest.clearAllMocks(); // Clear all mocks before each test
+  });
+
   describe('searchYahoo', () => {
     it('should return a list of valid assets', async () => {
       mockedYahoo.search.mockResolvedValue({
@@ -63,10 +70,6 @@ describe('yahooFinance service', () => {
       currency: 'USD',
     };
 
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-
     it('should return a stock asset (no currency conversion)', async () => {
       mockedYahoo.quote.mockResolvedValue(baseResponse as any);
 
@@ -99,8 +102,6 @@ describe('yahooFinance service', () => {
     });
 
     it('should warn and return asset when currency is not found', async () => {
-      const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
-
       mockedYahoo.quote.mockResolvedValue({
         ...baseResponse,
         quoteType: 'ETF',
@@ -113,7 +114,8 @@ describe('yahooFinance service', () => {
       mockedAssetModel.findOne.mockResolvedValue(null);
 
       const result = await getEtf('CNDX.AS');
-      expect(warnSpy).toHaveBeenCalledWith('Currency EUR not found in DB. Skipping conversion.');
+
+      expect(mockedLogger.warn).toHaveBeenCalledWith('Currency EUR not found in DB. Skipping conversion.');
       expect(result[0].price).toBe(100);
     });
 

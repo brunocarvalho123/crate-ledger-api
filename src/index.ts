@@ -1,9 +1,10 @@
 // src/index.ts
 import express from 'express';
-import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import logger from './utils/logger';
+import loggerMiddleware from './middleware/loggerMiddleware';
+import { apiLimiter } from './middleware/apiLimiter';
 import assetRoutes from './routes/assetRoutes';
 import { Asset } from './models/asset';
 import { startSyncCryptoAssetsJob } from './jobs/syncCryptoAssetsJob';
@@ -16,18 +17,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-
-const apiLimiter = rateLimit({
-  windowMs: 2 * 60 * 1000, // 2 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    error: 'Too many requests, please try again later.'
-  }
-});
 app.use(apiLimiter);
-
+app.use(loggerMiddleware);
 app.use('/assets', assetRoutes);
 
 mongoose.connect(process.env.MONGODB_URI!)

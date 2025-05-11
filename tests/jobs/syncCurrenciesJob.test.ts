@@ -3,13 +3,20 @@ import { syncCurrencies, startSyncCurrenciesJob } from '../../src/jobs/syncCurre
 import { getAllCurrencies, getAvailableCurrencies } from '../../src/services/frankfurter';
 import logger from '../../src/utils/logger';
 import { syncAssetsWithDb } from '../../src/utils/syncAssets';
+import { UnexpectedApiData } from '../../src/utils/errors/serviceErrors';
 
 // Mock the external dependencies
 jest.mock('../../src/services/frankfurter');
 jest.mock('../../src/utils/syncAssets');
 jest.mock('../../src/utils/logger');
 
+const mockedLogger = logger as jest.Mocked<typeof logger>;
+
 describe('syncCurrencies', () => {
+  beforeEach(() => {
+    jest.clearAllMocks(); // Clear all mocks before each test
+  });
+
   it('should sync currencies successfully', async () => {
     const mockAvailableCurrencies = { USD: 'United States Dollar', EUR: 'Euro' };
     const mockCurrencies = { USD: 'United States Dollar', EUR: 'Euro', GBP: 'British Pound' };
@@ -21,6 +28,8 @@ describe('syncCurrencies', () => {
 
     expect(getAllCurrencies).toHaveBeenCalledWith(mockAvailableCurrencies);
     expect(syncAssetsWithDb).toHaveBeenCalledWith(mockCurrencies);
+    expect(mockedLogger.info).toHaveBeenCalledWith('🔄 Syncing currencies...');
+    expect(mockedLogger.info).toHaveBeenCalledWith('✅ Currency sync complete');
   });
 
   it('should handle errors during sync', async () => {
@@ -31,12 +40,23 @@ describe('syncCurrencies', () => {
 
     await syncCurrencies(mockAvailableCurrencies);
 
-    expect(logger.error).toHaveBeenCalledWith('❌ Error during Currency sync:', error);
+    expect(mockedLogger.error).toHaveBeenCalledWith('❌ Error during Currency sync:', error);
+  });
+
+  it('should handle UnexpectedApiData errors during sync', async () => {
+    const mockAvailableCurrencies = { USD: 'United States Dollar', EUR: 'Euro' };
+    const error = new UnexpectedApiData('Failed to fetch currencies', {});
+
+    (getAllCurrencies as jest.Mock).mockRejectedValue(error);
+
+    await syncCurrencies(mockAvailableCurrencies);
+
+    expect(mockedLogger.error).toHaveBeenCalledWith('Unexpected Data response from API: Failed to fetch currencies', {});
   });
 });
 
 describe('startSyncCurrenciesJob', () => {
-   beforeEach(() => {
+  beforeEach(() => {
     // Mock setInterval
     jest.useFakeTimers();
     jest.spyOn(global, 'setInterval');
