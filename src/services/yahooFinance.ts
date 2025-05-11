@@ -3,9 +3,13 @@ import yahooFinance from 'yahoo-finance2';
 import logger from '../utils/logger';
 import { Asset } from '../models/asset';
 import { AssetCategory, AssetSearchResult, AssetType } from '../types/asset';
-import { UnexpectedApiData } from '../utils/errors/serviceErrors';
+import { SearchQueryTooShort, UnexpectedApiData } from '../utils/errors/serviceErrors';
 
 export const searchYahoo = async (query: string): Promise<AssetSearchResult[]> => {
+  if (query.length < 3) {
+    throw new SearchQueryTooShort('Query string should be at least 3 characters long');
+  }
+
   logger.info(`Calling Yahoo Finance search API with query: ${query}`);
   const results = await yahooFinance.search(query);
 

@@ -3,7 +3,7 @@ import { searchYahoo, getStock, getEtf } from '../../src/services/yahooFinance';
 import yahooFinance from 'yahoo-finance2';
 import { Asset } from '../../src/models/asset';
 import { AssetCategory } from '../../src/types/asset';
-import { UnexpectedApiData } from '../../src/utils/errors/serviceErrors';
+import { UnexpectedApiData, SearchQueryTooShort } from '../../src/utils/errors/serviceErrors';
 import logger from '../../src/utils/logger';
 
 jest.mock('yahoo-finance2');
@@ -58,6 +58,10 @@ describe('yahooFinance service', () => {
       mockedYahoo.search.mockResolvedValue({ quotes: null } as any);
 
       await expect(searchYahoo('abc')).rejects.toThrow(UnexpectedApiData);
+    });
+
+    it('should throw an error if query parameter is less than 3 chars long', async () => {
+      await expect(searchYahoo('ab')).rejects.toThrow(SearchQueryTooShort);
     });
   });
 

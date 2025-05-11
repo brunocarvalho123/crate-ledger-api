@@ -5,3 +5,9 @@ export class UnexpectedApiData extends Error {
     this.name = 'UnexpectedApiData';
   }
 }
+export class SearchQueryTooShort extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'SearchQueryTooShort';
+  }
+}

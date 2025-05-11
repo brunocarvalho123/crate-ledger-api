@@ -6,7 +6,7 @@ import { AssetDocument } from '../types/assetDocument';
 import { isAssetStale } from '../utils/isAssetStale';
 import { fetchAssetFromApi } from '../utils/fetchAssetFromApi';
 import { searchYahoo } from '../services/yahooFinance';
-import { UnexpectedApiData } from '../utils/errors/serviceErrors';
+import { SearchQueryTooShort, UnexpectedApiData } from '../utils/errors/serviceErrors';
 import logger from '../utils/logger';
 
 export const getAsset = async (req: Request, res: Response) => {
@@ -81,6 +81,8 @@ export const searchAssets = async (req: Request, res: Response) => {
   } catch (error) {
     if (error instanceof UnexpectedApiData) {
       logger.error(`Error from API: ${error.message}`, error.results);
+    } else if (error instanceof SearchQueryTooShort) {
+      logger.error('Search query too short:', error);
     } else {
       logger.error('An unexpected error occurred:', error);
     }
