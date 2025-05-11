@@ -8,6 +8,7 @@ import { syncAssetsWithDb } from '../utils/syncAssets';
 import { getCrypto } from '../services/coincap';
 import { AssetDocument } from '../types/assetDocument';
 import { getEtf, getStock as getYFStock } from '../services/yahooFinance';
+import { isAssetStale } from '../utils/isAssetStale';
 
 export const getAsset = async (req: Request, res: Response) => {
   console.log("Getting single asset")
@@ -73,44 +74,6 @@ export const getAssets = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error fetching assets', error: err });
   }
 };
-
-const isAssetStale = (asset: AssetDocument): boolean => {
-  if (asset.updatedAt) {
-    const now = new Date();
-    const assetUpdatedAt = new Date(asset.updatedAt);
-
-    let staleTime = 10 * 60000 // 10min default
-
-    switch (asset.type) {
-      case AssetCategory.Stock:
-        staleTime = 30 * 60000 // 30min
-        break;
-      case AssetCategory.Etf:
-        staleTime = 30 * 60000 // 30min
-        break;
-      case AssetCategory.Crypto:
-        staleTime = 5 * 60000 // 5min
-        break;
-      case AssetCategory.Bond:
-        staleTime = Infinity // None
-        break;
-      case AssetCategory.Metal:
-        staleTime = Infinity // None
-        break;
-      case AssetCategory.Cash:
-        staleTime = Infinity // None
-        break;
-      default:
-        throw new Error("Invalid type");
-    }
-
-    if ((now.getTime() - assetUpdatedAt.getTime()) > staleTime) {
-      console.log(`${asset.symbol} is stale...`)
-      return true
-    }
-  }
-  return false;
-}
 
 const fetchAssetFromApi = async (key: string): Promise<AssetDocument | null> => {
   // Asset not found in database check type and request data from apropriate API
