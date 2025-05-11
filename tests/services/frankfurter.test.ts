@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { getAvailableCurrencies, getAllCurrencies } from '../../src/services/frankfurter';
 import { AssetCategory } from '../../src/types/asset';
+import { UnexpectedApiData } from '../../src/utils/errors/serviceErrors';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -20,7 +21,7 @@ describe('Frankfurter Currency Service', () => {
     it('throws error on invalid response', async () => {
       mockedAxios.get.mockResolvedValue({ data: {} });
 
-      await expect(getAvailableCurrencies()).rejects.toThrow('Unexpected response from frankfurter API');
+      await expect(getAvailableCurrencies()).rejects.toThrow(UnexpectedApiData);
     });
 
     it('throws error if API fails', async () => {
@@ -60,7 +61,7 @@ describe('Frankfurter Currency Service', () => {
     it('throws error if response base is not USD', async () => {
       mockedAxios.get.mockResolvedValue({ data: { base: 'EUR' } });
 
-      await expect(getAllCurrencies(availableCurrencies)).rejects.toThrow('Unexpected response from frankfurter API');
+      await expect(getAllCurrencies(availableCurrencies)).rejects.toThrow(UnexpectedApiData);
     });
 
     it('throws error if API fails', async () => {

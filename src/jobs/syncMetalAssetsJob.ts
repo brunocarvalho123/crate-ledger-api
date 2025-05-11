@@ -1,15 +1,21 @@
 // src/jobs/syncMetalAssetsJob.ts
 import { getAllMetals } from '../services/metalprices';
+import { UnexpectedApiData } from '../utils/errors/serviceErrors';
+import logger from '../utils/logger';
 import { syncAssetsWithDb } from '../utils/syncAssets';
 
 export const syncMetalAssets = async () => {
-  console.log('🔄 Syncing metal assets...');
+  logger.info('🔄 Syncing metal assets...');
   try {
     const metalAssets = await getAllMetals();
     await syncAssetsWithDb(metalAssets);
-    console.log('✅ Metal assets sync complete');  
+    logger.info('✅ Metal assets sync complete');  
   } catch (error) {
-    console.error('❌ Error during Metal assets sync:', error);
+    if (error instanceof UnexpectedApiData) {
+      logger.error(`Unexpected Data response from API: ${error.message}`, error.results);
+    } else {
+      logger.error('❌ Error during Metal assets sync:', error);
+    }
   }
 };
 

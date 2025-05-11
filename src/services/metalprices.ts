@@ -2,6 +2,8 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 import { AssetCategory, AssetType } from '../types/asset';
+import logger from '../utils/logger';
+import { UnexpectedApiData } from '../utils/errors/serviceErrors';
 
 dotenv.config();
 
@@ -28,7 +30,7 @@ export const getAllMetals = async (): Promise<AssetType[]> => {
   });
   const fullUrl = `${baseUrl}/latest?${params.toString()}`;
 
-  console.log(`Calling metalprices API with url: ${fullUrl}`);
+  logger.info(`Calling metalprices API with url: ${fullUrl}`);
 
   const response = await axios.get(fullUrl);
 
@@ -57,8 +59,7 @@ export const getAllMetals = async (): Promise<AssetType[]> => {
 
     return assets;
   } else {
-    console.log(response);
-    throw new Error('Unexpected response from metalprices API');
+    throw new UnexpectedApiData('Metalprice', response);
   }
 }
 

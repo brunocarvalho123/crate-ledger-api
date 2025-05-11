@@ -2,6 +2,8 @@
 import axios from 'axios';
 import { AssetCategory, AssetType } from '../types/asset';
 import { CurrencyMap } from '../types/currencyMap';
+import logger from '../utils/logger';
+import { UnexpectedApiData } from '../utils/errors/serviceErrors';
 
 const baseUrl = "https://api.frankfurter.dev/v1";
 
@@ -11,15 +13,14 @@ export const getAvailableCurrencies = async () => {
   if (response?.data && response.data["EUR"]) {
     return response.data;
   } else {
-    console.log(response);
-    throw new Error(`Unexpected response from frankfurter API: ${fullUrl}`);
+    throw new UnexpectedApiData('Frankfurter currency list', response);
   }
 }
 
 export const getAllCurrencies = async (availableCurrencies: CurrencyMap): Promise<AssetType[]> => {
   const fullUrl = `${baseUrl}/latest?base=USD`;
 
-  console.log(`Calling frankfurter API with url: ${fullUrl}`);
+  logger.info(`Calling frankfurter API with url: ${fullUrl}`);
   
   const response = await axios.get(fullUrl);
 
@@ -49,8 +50,7 @@ export const getAllCurrencies = async (availableCurrencies: CurrencyMap): Promis
 
     return assets;
   } else {
-    console.log(response);
-    throw new Error('Unexpected response from frankfurter API');
+    throw new UnexpectedApiData('Frankfurter latest', response);
   }
 }
 

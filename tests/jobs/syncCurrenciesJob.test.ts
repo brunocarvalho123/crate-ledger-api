@@ -1,23 +1,15 @@
 // tests/jobs/syncCurrenciesAssetsJob.test.ts
 import { syncCurrencies, startSyncCurrenciesJob } from '../../src/jobs/syncCurrenciesJob';
 import { getAllCurrencies, getAvailableCurrencies } from '../../src/services/frankfurter';
+import logger from '../../src/utils/logger';
 import { syncAssetsWithDb } from '../../src/utils/syncAssets';
 
 // Mock the external dependencies
 jest.mock('../../src/services/frankfurter');
 jest.mock('../../src/utils/syncAssets');
+jest.mock('../../src/utils/logger');
 
 describe('syncCurrencies', () => {
-  beforeEach(() => {
-    // Mock console.error
-    jest.spyOn(console, 'error').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    // Restore console.error to its original implementation
-    jest.restoreAllMocks();
-  });
-
   it('should sync currencies successfully', async () => {
     const mockAvailableCurrencies = { USD: 'United States Dollar', EUR: 'Euro' };
     const mockCurrencies = { USD: 'United States Dollar', EUR: 'Euro', GBP: 'British Pound' };
@@ -39,7 +31,7 @@ describe('syncCurrencies', () => {
 
     await syncCurrencies(mockAvailableCurrencies);
 
-    expect(console.error).toHaveBeenCalledWith('❌ Error during Currency sync:', error);
+    expect(logger.error).toHaveBeenCalledWith('❌ Error during Currency sync:', error);
   });
 });
 

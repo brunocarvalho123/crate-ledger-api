@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { getCrypto, getAllAssetsInfo } from '../../src/services/coincap';
 import { AssetCategory } from '../../src/types/asset';
+import { UnexpectedApiData } from '../../src/utils/errors/serviceErrors';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -48,7 +49,7 @@ describe('CoinCap Service', () => {
         data: {} // Missing `data.data`
       });
 
-      await expect(getCrypto('btc')).rejects.toThrow('Unexpected response from CoinCap API');
+      await expect(getCrypto('btc')).rejects.toThrow(UnexpectedApiData);
     });
 
     it('throws error if API call fails', async () => {
@@ -84,7 +85,7 @@ describe('CoinCap Service', () => {
         }
       });
 
-      await expect(getAllAssetsInfo()).rejects.toThrow('Asset not found');
+      await expect(getAllAssetsInfo()).rejects.toThrow(UnexpectedApiData);
     });
 
     it('throws error on unexpected shape', async () => {
@@ -92,7 +93,7 @@ describe('CoinCap Service', () => {
         data: {} // Missing `data.data`
       });
 
-      await expect(getAllAssetsInfo()).rejects.toThrow('Unexpected response from CoinCap API');
+      await expect(getAllAssetsInfo()).rejects.toThrow(UnexpectedApiData);
     });
 
     it('throws error if API fails', async () => {

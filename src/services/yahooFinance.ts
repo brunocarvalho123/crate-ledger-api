@@ -1,9 +1,12 @@
 // src/services/yahooFinance.ts
+import yahooFinance from 'yahoo-finance2';
+import logger from '../utils/logger';
 import { Asset } from '../models/asset';
 import { AssetCategory, AssetSearchResult, AssetType } from '../types/asset';
-import yahooFinance from 'yahoo-finance2';
+import { UnexpectedApiData } from '../utils/errors/serviceErrors';
 
 export const searchYahoo = async (query: string): Promise<AssetSearchResult[]> => {
+  logger.info(`Calling Yahoo Finance search API with query: ${query}`);
   const results = await yahooFinance.search(query);
 
   if (results.quotes && results.quotes.length > 0) {
@@ -23,8 +26,7 @@ export const searchYahoo = async (query: string): Promise<AssetSearchResult[]> =
 
     return assets;
   }  else {
-    console.log(results);
-    throw new Error('Unexpected response from yahoo finance API');
+    throw new UnexpectedApiData('Yahoo Finance search', results);
   }
 }
 
@@ -92,7 +94,7 @@ const getAsset = async (type: AssetCategory, symbol: string): Promise<AssetType[
         // We always store prices in USD
         assetPrice = assetPrice * currency.price;
       } else {
-        console.warn(`Currency ${response.currency} not found in DB. Skipping conversion.`);
+        logger.warn(`Currency ${response.currency} not found in DB. Skipping conversion.`);
       }
     }
 
@@ -109,8 +111,7 @@ const getAsset = async (type: AssetCategory, symbol: string): Promise<AssetType[
 
     return [asset];
   } else {
-    console.log(response);
-    throw new Error('Unexpected response from yahoo finance API');
+    throw new UnexpectedApiData('Yahoo Finance quote', response);
   }
 }
 

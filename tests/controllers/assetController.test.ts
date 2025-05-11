@@ -5,7 +5,6 @@ import { isAssetStale } from '../../src/utils/isAssetStale';
 import { fetchAssetFromApi } from '../../src/utils/fetchAssetFromApi';
 import { serializeAsset, serializeAssets } from '../../src/utils/serializeAssets';
 import { AssetDocument } from '../../src/types/assetDocument';
-import { AssetSearchResult } from '../../src/types/asset';
 import { searchYahoo } from '../../src/services/yahooFinance';
 
 jest.mock('../../src/models/asset');

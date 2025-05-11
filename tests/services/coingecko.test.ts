@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { getAllAssetsInfo } from '../../src/services/coingecko';
 import { AssetCategory } from '../../src/types/asset';
+import { UnexpectedApiData } from '../../src/utils/errors/serviceErrors';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -46,7 +47,7 @@ describe('getAllAssetsInfo', () => {
   it('throws an error if the API returns empty data', async () => {
     mockedAxios.get.mockResolvedValue({ data: [] });
 
-    await expect(getAllAssetsInfo()).rejects.toThrow('Unexpected response from CoinGecko API');
+    await expect(getAllAssetsInfo()).rejects.toThrow(UnexpectedApiData);
   });
 
   it('throws an error if the API fails', async () => {

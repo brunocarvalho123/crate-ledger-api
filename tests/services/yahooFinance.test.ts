@@ -3,6 +3,7 @@ import { searchYahoo, getStock, getEtf } from '../../src/services/yahooFinance';
 import yahooFinance from 'yahoo-finance2';
 import { Asset } from '../../src/models/asset';
 import { AssetCategory } from '../../src/types/asset';
+import { UnexpectedApiData } from '../../src/utils/errors/serviceErrors';
 
 jest.mock('yahoo-finance2');
 jest.mock('../../src/models/asset');
@@ -49,7 +50,7 @@ describe('yahooFinance service', () => {
     it('should throw an error for invalid API response', async () => {
       mockedYahoo.search.mockResolvedValue({ quotes: null } as any);
 
-      await expect(searchYahoo('abc')).rejects.toThrow('Unexpected response from yahoo finance API');
+      await expect(searchYahoo('abc')).rejects.toThrow(UnexpectedApiData);
     });
   });
 
@@ -131,7 +132,7 @@ describe('yahooFinance service', () => {
         symbol: 'AAPL',
       } as any);
 
-      await expect(getStock('AAPL')).rejects.toThrow('Unexpected response from yahoo finance API');
+      await expect(getStock('AAPL')).rejects.toThrow(UnexpectedApiData);
     });
   });
 });

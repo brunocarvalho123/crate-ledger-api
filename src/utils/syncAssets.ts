@@ -1,6 +1,7 @@
 // src/utils/syncAssets.ts
 import { Asset } from '../models/asset';
 import { AssetType } from '../types/asset';
+import logger from './logger';
 
 export const syncAssetsWithDb = async (assets: AssetType[]) => {
   const now = new Date();
@@ -32,9 +33,9 @@ export const syncAssetsWithDb = async (assets: AssetType[]) => {
 
   try {
     const result = await Asset.bulkWrite(bulkOps);
-    console.log(`syncAssetsWithDb: Matched ${result.matchedCount}, Upserted ${result.upsertedCount}, Modified ${result.modifiedCount}`);
+    logger.info(`syncAssetsWithDb: Matched ${result.matchedCount}, Upserted ${result.upsertedCount}, Modified ${result.modifiedCount}`)
     return result;
-  } catch (err) {
-    throw err;
+  } catch (error) {
+    throw error;
   }
 };

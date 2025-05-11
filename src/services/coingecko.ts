@@ -2,6 +2,8 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 import { AssetType, AssetCategory } from '../types/asset';
+import logger from '../utils/logger';
+import { UnexpectedApiData } from '../utils/errors/serviceErrors';
 
 dotenv.config();
 
@@ -12,7 +14,7 @@ const token = process.env.COINGECKO_API_TOKEN!;
 export const getAllAssetsInfo = async (): Promise<AssetType[]> => {
   const fullUrl = `${baseUrl}/coins/markets?vs_currency=usd&per_page=250`;
 
-  console.log(`Calling CoinGecko API with url: ${fullUrl}`);
+  logger.info(`Calling CoinGecko API with url: ${fullUrl}`);
   
   const response = await axios.get(fullUrl, {
     headers: {
@@ -35,8 +37,7 @@ export const getAllAssetsInfo = async (): Promise<AssetType[]> => {
 
     return assets;
   } else {
-    console.log(response);
-    throw new Error('Unexpected response from CoinGecko API');
+    throw new UnexpectedApiData('CoinGecko', response);
   }
 }
 

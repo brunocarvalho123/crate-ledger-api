@@ -6,15 +6,15 @@ import { AssetDocument } from '../types/assetDocument';
 import { isAssetStale } from '../utils/isAssetStale';
 import { fetchAssetFromApi } from '../utils/fetchAssetFromApi';
 import { searchYahoo } from '../services/yahooFinance';
+import { UnexpectedApiData } from '../utils/errors/serviceErrors';
+import logger from '../utils/logger';
 
 export const getAsset = async (req: Request, res: Response) => {
   const id = req.params.id;
-
   if (!id) {
     res.status(400).json({ error: 'ID parameter is required' });
     return;
   }
-  console.log(`with key: ${id}`)
   try {
     let asset: AssetDocument | null;
     asset = await Asset.findOne({ uniqueKey: id });
@@ -22,28 +22,21 @@ export const getAsset = async (req: Request, res: Response) => {
     if (asset === null || isAssetStale(asset)) {
       asset = await fetchAssetFromApi(id);
     }
-
-    console.log(asset)
     res.json(serializeAsset(asset));
     return;
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching assets', error: err });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching assets', error: error });
     return;
   }
 };
 
 export const getAssets = async (req: Request, res: Response) => {
   const keysParam = req.query?.keys as string;
-  console.log(keysParam);
-  
   if (!keysParam) {
     res.status(400).json({ error: 'keys query parameter is required' });
     return;
   }
-
   const uniqueKeys = keysParam.split(',').map(k => k.trim());
-  console.log(`Requested keys: ${uniqueKeys}`);
-
   try {
     // Fetch existing assets
     const foundAssets = await Asset.find({ uniqueKey: { $in: uniqueKeys } });
@@ -55,11 +48,10 @@ export const getAssets = async (req: Request, res: Response) => {
       let asset:(AssetDocument | null) = foundMap.get(key) || null;
 
       if (asset === null || isAssetStale(asset)) { 
-        console.log(`Fetching fresh asset for: ${key}`);
         try {
           asset = await fetchAssetFromApi(key);
-        } catch (err) {
-          console.warn(`Failed to fetch asset for key ${key}:`, err);
+        } catch (error) {
+          logger.warn(`Failed to fetch asset for key ${key}:`, error);
         }
       }
       if (asset) {
@@ -69,9 +61,9 @@ export const getAssets = async (req: Request, res: Response) => {
 
     res.json(serializeAssets(finalAssets));
     return;
-  } catch (err) {
-    console.error('Unexpected error:', err);
-    res.status(500).json({ message: 'Error fetching assets', error: err });
+  } catch (error) {
+    logger.error('Unexpected error:', error);
+    res.status(500).json({ message: 'Error fetching assets', error: error });
     return;
   }
 };
@@ -86,8 +78,13 @@ export const searchAssets = async (req: Request, res: Response) => {
     const results = await searchYahoo(searchParam);  
     res.json(results);
     return;
-  } catch (err) {
-    res.status(500).json({ message: 'Error searching assets', error: err });
+  } catch (error) {
+    if (error instanceof UnexpectedApiData) {
+      logger.error(`Error from API: ${error.message}`, error.results);
+    } else {
+      logger.error('An unexpected error occurred:', error);
+    }
+    res.status(500).json({ message: 'Error searching assets', error: error });
     return;
   }
 }

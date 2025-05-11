@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { getAllMetals } from '../../src/services/metalprices';
 import { AssetCategory } from '../../src/types/asset';
+import { UnexpectedApiData } from '../../src/utils/errors/serviceErrors';
 
 // Mock axios
 jest.mock('axios');
@@ -53,7 +54,7 @@ describe('getAllMetals', () => {
       }
     });
 
-    await expect(getAllMetals()).rejects.toThrow('Unexpected response from metalprices API');
+    await expect(getAllMetals()).rejects.toThrow(UnexpectedApiData);
   });
 
   it('should throw on invalid data', async () => {

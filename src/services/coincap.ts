@@ -2,6 +2,8 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 import { AssetCategory, AssetType } from '../types/asset';
+import logger from '../utils/logger';
+import { UnexpectedApiData } from '../utils/errors/serviceErrors';
 
 dotenv.config();
 
@@ -12,7 +14,7 @@ const token = process.env.COINCAP_API_TOKEN!;
 export const getCrypto = async (symbol: string): Promise<AssetType[]> => {
   const fullUrl = `${baseUrl}/assets?search=${symbol}&limit=1`;
 
-  console.log(`Calling CoinCap API with url: ${fullUrl}`);
+  logger.info(`Calling CoinCap search API with url: ${fullUrl}`);
   
   const response = await axios.get(fullUrl, {
     headers: {
@@ -34,7 +36,7 @@ export const getCrypto = async (symbol: string): Promise<AssetType[]> => {
   } else if (response?.data?.data === null) {
     throw new Error('Asset not found');
   } else {
-    throw new Error('Unexpected response from CoinCap API');
+    throw new UnexpectedApiData('CoinCap search', response);
   }
 }
 
@@ -42,7 +44,7 @@ export const getCrypto = async (symbol: string): Promise<AssetType[]> => {
 export const getAllAssetsInfo = async (): Promise<AssetType[]> => {
   const fullUrl = `${baseUrl}/assets?limit=250`;
 
-  console.log(`Calling CoinCap API with url: ${fullUrl}`);
+  logger.info(`Calling CoinCap API with url: ${fullUrl}`);
   
   const response = await axios.get(fullUrl, {
     headers: {
@@ -63,10 +65,8 @@ export const getAllAssetsInfo = async (): Promise<AssetType[]> => {
     }));
 
     return assets;
-  } else if (response?.data?.data === null) {
-    throw new Error('Asset not found');
   } else {
-    throw new Error('Unexpected response from CoinCap API');
+    throw new UnexpectedApiData('CoinCap', response);
   }
 }
 

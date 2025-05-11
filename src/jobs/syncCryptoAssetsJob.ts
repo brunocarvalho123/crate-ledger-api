@@ -1,15 +1,21 @@
 // src/jobs/syncCryptoAssetsJob.ts
 import { getAllAssetsInfo } from '../services/coingecko';
+import { UnexpectedApiData } from '../utils/errors/serviceErrors';
+import logger from '../utils/logger';
 import { syncAssetsWithDb } from '../utils/syncAssets';
 
 export const syncCryptoAssets = async () => {
-  console.log('🔄 Syncing crypto assets...');
+  logger.info('🔄 Syncing crypto assets...');
   try {
     const geckoAssets = await getAllAssetsInfo();
     await syncAssetsWithDb(geckoAssets);
-    console.log('✅ Crypto assets sync complete');  
+    logger.info('✅ Crypto assets sync complete');  
   } catch (error) {
-    console.error('❌ Error during Crypto assets sync:', error);
+    if (error instanceof UnexpectedApiData) {
+      logger.error(`Unexpected Data response from API: ${error.message}`, error.results);
+    } else {
+      logger.error('❌ Error during Crypto assets sync:', error);
+    }
   }
 };
 

@@ -2,6 +2,8 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 import { AssetCategory, AssetType } from '../types/asset';
+import logger from '../utils/logger';
+import { UnexpectedApiData } from '../utils/errors/serviceErrors';
 
 dotenv.config();
 
@@ -11,7 +13,7 @@ const token = process.env.FMP_API_TOKEN!;
 export const getStock = async (symbol: string): Promise<AssetType[]> => {
   const fullUrl = `${baseUrl}/quote?symbol=${symbol.toUpperCase()}&apikey=${token}`;
 
-  console.log(`Calling FMP API with url: ${fullUrl}`);
+  logger.info(`Calling FMP quote API with url: ${fullUrl}`);
   
   const response = await axios.get(fullUrl);
   if (response?.data && response.data.length > 0) {
@@ -28,8 +30,7 @@ export const getStock = async (symbol: string): Promise<AssetType[]> => {
 
     return asset;
   } else {
-    console.log(response);
-    throw new Error('Unexpected response from FMP API');
+    throw new UnexpectedApiData('FMP', response);
   }
 }
 

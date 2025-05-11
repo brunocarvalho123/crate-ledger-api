@@ -5,6 +5,7 @@ import { getStock } from "../services/fmp";
 import { getEtf, getStock as getYFStock } from "../services/yahooFinance";
 import { AssetCategory, toAssetCategory, AssetType } from "../types/asset";
 import { AssetDocument } from "../types/assetDocument";
+import logger from "./logger";
 import { syncAssetsWithDb } from "./syncAssets";
 
 export const fetchAssetFromApi = async (key: string): Promise<AssetDocument | null> => {
@@ -19,7 +20,7 @@ export const fetchAssetFromApi = async (key: string): Promise<AssetDocument | nu
         try {
           apiCallResult = await getStock(symbol);
         } catch (error) {
-          console.error(error);
+          logger.error('Error calling FMP stock API, trying with yahoo...', error);
           apiCallResult = await getYFStock(symbol);
         }
         break;
