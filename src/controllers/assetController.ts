@@ -90,8 +90,10 @@ export const searchAssets = async (req: Request, res: Response) => {
       const yahooResults = await searchYahoo(searchParam);
       results = [...dbResults, ...yahooResults];
     }
+    const uniqueStringifiedArray = [...new Set(results.map(item => JSON.stringify(item)))];
+    const uniqueResults = uniqueStringifiedArray.map(item => JSON.parse(item));
     
-    res.json(results);
+    res.json(uniqueResults);
     return;
   } catch (error) {
     if (error instanceof UnexpectedApiData) {

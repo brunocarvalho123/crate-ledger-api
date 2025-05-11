@@ -125,7 +125,15 @@ describe('assetController', () => {
 
       const searchResultsDb = [
         {"name":"Bitcoin.","type":"crypto","symbol":"BTC"},
+        {"name":"Alphabet Inc.","type":"stock","symbol":"GOOG"},
+        {"name":"Ethereum.","type":"crypto","symbol":"ETH"}
+      ];
+
+      const expectedResult = [
+        {"name":"Bitcoin.","type":"crypto","symbol":"BTC"},
+        {"name":"Alphabet Inc.","type":"stock","symbol":"GOOG"},
         {"name":"Ethereum.","type":"crypto","symbol":"ETH"},
+        {"name":"Alphabet Inc.","type":"stock","symbol":"GOOGL"},
       ];
 
       (searchDb as jest.Mock).mockResolvedValue(searchResultsDb);
@@ -135,7 +143,7 @@ describe('assetController', () => {
 
       expect(searchYahoo).toHaveBeenCalledWith('goog');
       expect(searchDb).toHaveBeenCalledWith('goog');
-      expect(res.json).toHaveBeenCalledWith([...searchResultsDb,...searchResultsYahoo]);
+      expect(res.json).toHaveBeenCalledWith(expectedResult);
     });
 
     it('returns search results with type', async () => {
