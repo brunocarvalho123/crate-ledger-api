@@ -9,23 +9,43 @@ export const searchDb = async (query: string, type?: AssetCategory): Promise<Ass
   if (query.length < 3) {
     throw new SearchQueryTooShort('Query string should be at least 3 characters long');
   }
-  let searchQuery: any = { $text: { $search: query } };
+
+  const textQuery: any = { $text: { $search: query } };
+  const regexQuery: any = {
+    $or: [
+      { name: new RegExp(query, 'i') },
+      { symbol: new RegExp(query, 'i') }
+    ]
+  };
   if (type) {
-    searchQuery.type = type;
+    textQuery.type = type;
+    regexQuery.type = type;
   }
-  const assets = await Asset.find(
-    searchQuery,
-    { score: { $meta: 'textScore' } }
-  ).sort({ score: { $meta: 'textScore' } });
 
-  const results: AssetSearchResult[] = assets.map((asset: AssetDocument) => {
-    return {
-      name: asset.name,
-      type: asset.type,
-      symbol: asset.symbol
-    }
-  })
+  const [textResults, regexResults] = await Promise.all([
+    Asset.find(textQuery, { score: { $meta: 'textScore' } }).sort({ score: { $meta: 'textScore' } }),
+    Asset.find(regexQuery).limit(20) // limit to avoid huge result set
+  ]);
 
-  logger.info(`searching db with ${query} and ${type}. Results: ${assets}`);
-  return results;
+  const combined = [...textResults, ...regexResults];
+
+  const unique = new Map<string, AssetDocument>();
+  for (const asset of combined) {
+    unique.set(asset._id.toString(), asset);
+  }
+
+  // Exact matches should come first!
+  const sorted = Array.from(unique.values()).sort((a, b) => {
+    const aExact = a.symbol.toLowerCase() === query.toLowerCase();
+    const bExact = b.symbol.toLowerCase() === query.toLowerCase();
+    if (aExact && !bExact) return -1;
+    if (!aExact && bExact) return 1;
+    return 0;
+  });
+
+  return sorted.map((asset) => ({
+    name: asset.name,
+    type: asset.type,
+    symbol: asset.symbol
+  }));
 };

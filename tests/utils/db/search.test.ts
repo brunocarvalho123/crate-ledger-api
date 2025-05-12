@@ -8,9 +8,13 @@ jest.mock('../../../src/models/asset', () => ({
   Asset: {
     find: jest.fn().mockReturnThis(), // Allows chaining
     sort: jest.fn().mockResolvedValue([
-      { name: "Bitcoin.", type: "crypto", symbol: "BTC", extraparam: "test" },
-      { name: "Ethereum.", type: "crypto", symbol: "ETH", extraparam: "test" },
+      { _id: 1, name: "Bitcoin.", type: "crypto", symbol: "BTC", extraparam: "test" },
+      { _id: 2, name: "Ethereum.", type: "crypto", symbol: "ETH", extraparam: "test" },
     ]),
+    limit: jest.fn().mockResolvedValue([
+      { _id: 1, name: "Bitcoin.", type: "crypto", symbol: "BTC", extraparam: "test" },
+      { _id: 2, name: "Ethereum.", type: "crypto", symbol: "ETH", extraparam: "test" },
+    ])
   },
 }));
 
