@@ -81,7 +81,7 @@ export const searchAssets = async (req: Request, res: Response) => {
     let results: AssetSearchResult[] = [];
     if (typeParam) {
       if (typeParam == AssetCategory.Etf || typeParam == AssetCategory.Stock) {
-        results = await searchYahoo(searchParam);
+        results = await searchYahoo(searchParam, typeParam);
       }
       const dbResults = await searchDb(searchParam, typeParam);
       results = [...results, ...dbResults];

@@ -54,6 +54,35 @@ describe('yahooFinance service', () => {
       });
     });
 
+    it('search with given type', async () => {
+      mockedYahoo.search.mockResolvedValue({
+        quotes: [
+          {
+            longname: 'Alphabet Inc.',
+            symbol: 'GOOG',
+            quoteType: 'EQUITY',
+          },
+          {
+            shortname: 'Vanguard S&P 500',
+            symbol: 'VOO',
+            quoteType: 'ETF',
+          },
+          {
+            quoteType: 'MUTUALFUND', // ignored
+          },
+        ],
+      } as any);
+
+      const result = await searchYahoo('goog', AssetCategory.Stock);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        name: 'Alphabet Inc.',
+        symbol: 'GOOG',
+        type: AssetCategory.Stock,
+      });
+    });
+
     it('should throw an error for invalid API response', async () => {
       mockedYahoo.search.mockResolvedValue({ quotes: null } as any);
 

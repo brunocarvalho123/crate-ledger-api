@@ -5,7 +5,7 @@ import { Asset } from '../models/asset';
 import { AssetCategory, AssetSearchResult, AssetType } from '../types/asset';
 import { SearchQueryTooShort, UnexpectedApiData } from '../utils/errors/serviceErrors';
 
-export const searchYahoo = async (query: string): Promise<AssetSearchResult[]> => {
+export const searchYahoo = async (query: string, type?: AssetCategory): Promise<AssetSearchResult[]> => {
   if (query.length < 3) {
     throw new SearchQueryTooShort('Query string should be at least 3 characters long');
   }
@@ -20,6 +20,7 @@ export const searchYahoo = async (query: string): Promise<AssetSearchResult[]> =
       const assetName = asset.longname || asset.name || asset.shortname;
       const assetType = asset.quoteType === 'EQUITY' ? AssetCategory.Stock : (asset.quoteType === 'ETF' ? AssetCategory.Etf : null);
       if (!assetName || !asset.symbol || !assetType) return [];
+      if (type !== undefined && assetType !== type) return [];
 
       return {
         name: assetName,
